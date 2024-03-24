@@ -4,10 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Website</title>
+    <style>
+        body {
+            background-color: black; 
+            color: white; 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            display: flex; /* Use flexbox */
+            flex-direction: column; /* Arrange items vertically */
+            align-items: center; /* Center items horizontally */
+            justify-content: center; /* Center items vertically */
+            height: 100vh; /* Make body take full height of viewport */
+            margin: 0; /* Remove default margin */
+        }
+        .games-container {
+            display: flex; /* Use flexbox */
+            flex-wrap: wrap; /* Wrap items to next line */
+            justify-content: center; /* Center items horizontally */
+            margin-top: 20px;
+        }
+        .game {
+            margin: 10px; /* Add spacing between games */
+            padding: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 200px; /* Set width of each game box */
+            display: flex; /* Use flexbox */
+            flex-direction: column; /* Arrange items vertically */
+            align-items: center; /* Center items horizontally */
+        }
+        .game img {
+            width: 150px;
+            border-radius: 10px;
+        }
+        .game h2 {
+            margin-top: 10px;
+            font-size: 20px;
+        }
+        .worker {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    </style>
 </head>
 <body>
     <h1>Test Website home page</h1>
     <p>It is a bit chaotic for now.</p>
-    <img src="https://media.tenor.com/images/b66b6e2b9bcb3e7102470ef953eb3a11/tenor.gif" alt="Example GIF" width="300">
+    <h2>Games:</h2>
+    <div class="games-container">
+        <div class="game" onclick="window.location.href='/thecandybox/'">
+            <img src="images\candyboxdelux.PNG" alt="Candy Box Deluxe">
+            <h2>Candy Box Deluxe</h2>
+        </div>
+        <div class="game" onclick="window.location.href='/'">
+            <img src="images\Construction.png" alt="Another Game">
+            <h2>Another Game</h2>
+        </div>
+        <!-- Add more games here as needed -->
+    </div>
+    <!-- Worker GIF -->
+    <div class="worker">
+        <img src="https://www.fg-a.com/under-construction/construction-worker-animation.gif" alt="Construction Worker">
+    </div>
 </body>
 </html>
