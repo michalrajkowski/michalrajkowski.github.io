@@ -1,0 +1,1 @@
+- set so simulation size in main and clicks are the same

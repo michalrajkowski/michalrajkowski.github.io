@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Random Characters</title>
+<style>
+  #container {
+    font-family: monospace;
+    display: grid;
+    grid-template-columns: repeat(100, 1fr);
+    grid-template-rows: repeat(50, 1fr);
+  }
+  .cell {
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+</style>
+</head>
+<body>
+<div id="container"></div>
+
+<script>
+  // Function to generate a random character
+  function generateRandomChar() {
+    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    return chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+
+  // Function to generate a random color
+  function generateRandomColor() {
+    return '#' + Math.floor(Math.random() * 16777215).toString(16);
+  }
+
+  // Create 100x50 array of spans and assign random characters and colors to them
+  var container = document.getElementById("container");
+  for (var i = 0; i < 100; i++) {
+    for (var j = 0; j < 50; j++) {
+      var span = document.createElement("span");
+      span.setAttribute("class", "cell");
+      span.textContent = generateRandomChar();
+      span.style.color = generateRandomColor(); // Assigning random color
+      container.appendChild(span);
+    }
+  }
+
+  // Function to change the characters and colors of all cells
+  function changeCellsContent() {
+    var cells = document.querySelectorAll('.cell');
+    cells.forEach(function(cell) {
+      cell.textContent = generateRandomChar();
+      cell.style.color = generateRandomColor();
+    });
+  }
+
+  // Call the function to change cell content and colors every 100 milliseconds
+  setInterval(changeCellsContent, 50);
+</script>
+</body>
+</html>
