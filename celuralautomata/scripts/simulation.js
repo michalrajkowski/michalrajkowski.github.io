@@ -13,6 +13,8 @@ export class Simulation {
             this.cellGrid = [];
             Simulation.instance = this;
             this.screenhandler = new ScreenHandler();
+            this.absolute_frame = 0
+            this.real_frame = 0
             console.log("Simulation created!")
         }
         return Simulation.instance;
@@ -53,14 +55,23 @@ export class Simulation {
     }
 
     simulateFrame() {
+        this.absolute_frame+=1
+        if (this.absolute_frame%UISelector.frames_per_tick != 0){
+            return
+        }
+        this.real_frame+=1
+
+        // real simulation
         var grid = this.cellGrid
         const width = grid[0].length;
         const height = grid.length;
 
         // Change a random blockId in the first row to 1
+        /*
         const randomX = Math.floor(Math.random() * width);
         const firstRow = grid[0];
         firstRow[randomX].blockId = 1;
+        */
     
         // Iterate over each row
         for (let y = 0; y < height; y++) {

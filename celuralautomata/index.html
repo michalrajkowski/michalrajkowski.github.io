@@ -41,10 +41,10 @@
             background-color: black; /* Change button background to black */
             color: #fff;
             border: 2px solid white; /* Add white border around button */
-            padding: 10px 20px;
+            padding: 5px 10px;
             cursor: pointer;
-            font-size: 18px;
-            margin-right: 10px;
+            font-size: 14px;
+            margin-right: 5px;
         }
         .panel.horizontal {
             display: flex; /* Use flexbox for horizontal stacking */
@@ -72,20 +72,31 @@
             text-align: left; /* Align text to the left */
         }
     </style>
+    <link rel="shortcut icon" href="images\favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images\favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
     <title>Load HTML Content</title>
 </head>
 <body>
+    <div id="popup" class="popup">
+        <div class="popup-content">
+          <span class="close" id="closePopup">&times;</span>
+          <p>This is a long paragraph that will be used to demonstrate scrolling in the popup. This content will extend beyond the height of the popup, and a scrollbar will appear to allow scrolling.</p>
+        </div>
+    </div>
     <div class="panel horizontal">
         <div class="panel" id="clearScreen">
         </div>
         <div class="panel" id="elementsButtonPanel"></div>
         <div class="panel" id="brushesPanel"></div>
+        <div class="panel" id="timePanel"></div>
         <div class="panel" id="descriptionPanel">
             <div class="description-panel">
                 <div id="blockName" class="description-text">SAND</div>
                 <div id="blockDescription" class="description-small-text">This is the description of sand.</div>
             </div>
         </div>
+        
 
     </div>
     <hr>

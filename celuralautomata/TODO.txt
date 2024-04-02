@@ -1,1 +1,5 @@
 - set so simulation size in main and clicks are the same
+- obramowanie i wypadanie poza mapę. 
+- nasiono/roślina
+- żywa materia?
+- conveyor

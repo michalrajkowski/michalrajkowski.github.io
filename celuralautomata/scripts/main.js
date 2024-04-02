@@ -48,4 +48,4 @@ simulation.setup(200, 40)
 
 setInterval(() => {
     myFunction(simulation);
-}, 50);
+}, 10);

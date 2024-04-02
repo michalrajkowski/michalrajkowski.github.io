@@ -48,6 +48,7 @@ export class HandleClicks {
   }
 
   handleMouseDown(event) {
+    clearInterval(this.holdTimer);
     this.holdTimer = setInterval(() => {
       const rect = this.textBlock.getBoundingClientRect();
       const charWidth = this.textBlock.clientWidth / 200;
