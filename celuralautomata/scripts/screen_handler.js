@@ -2,8 +2,12 @@ import { BlocksHandler } from "./blocks_handler.js";
 export class ScreenHandler{
     static render_colors=false
     constructor(render_colors=false){
-        ScreenHandler.render_colors=render_colors
-        this.onStart();
+        if (!ScreenHandler.instance) {
+            ScreenHandler.instance = this;
+            ScreenHandler.render_colors=render_colors
+            this.onStart();
+        }
+        return ScreenHandler.instance;
     }
 
     onStart(){

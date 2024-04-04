@@ -43,6 +43,29 @@ export class UISelector{
         // Append the button to the panel
         clearScreenPanel.appendChild(button_clr);
 
+        const button_picture = document.createElement('button');
+        button_picture.textContent = 'Picture'; // Set button text
+        button_picture.classList.add('panel-button');
+        // Add event listener to the button
+        button_picture.addEventListener('click', () => {
+            // Call the clearScreen() method of this.simulation
+            const inputElement = document.getElementById('imageInput');
+            inputElement.click();
+        });
+
+        // Append the button to the panel
+        clearScreenPanel.appendChild(button_picture);
+
+        //Image load handling:
+        // Event listener for file input change
+        document.getElementById('imageInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                loadImageFromFile(file);
+            }
+        });
+
+
         const panel = document.getElementById('elementsButtonPanel');
         const blockDict = BlocksHandler.blockDict;
         Object.entries(blockDict).forEach(([key, value]) => {
@@ -155,7 +178,6 @@ export class UISelector{
     }
 
     onLateStart(startButtons){
-        console.log(startButtons)
         // Press start values
         document.addEventListener('DOMContentLoaded', function() {
             startButtons.forEach(button => {
@@ -200,4 +222,161 @@ function handleButtonClick(event) {
             UISelector.updateSelectedBlockUI()
         }
     }
+}
+
+function findClosestNumber(number, array) {
+    let closestNumber = array[0];
+    let minDifference = Math.abs(number - closestNumber);
+    let closestIndex = 0;
+
+    for (let i = 1; i < array.length; i++) {
+        const difference = Math.abs(number - array[i]);
+
+        if (difference < minDifference) {
+            closestNumber = array[i];
+            minDifference = difference;
+            closestIndex = i;
+        }
+    }
+
+    return { closestNumber, closestIndex };
+}
+
+function paintDataOnScreen(modifiedImgDataUrl, pixelColors){
+    const symbols_dict = [32,96,160,224];
+    const symbols_to_elements_id = [0,4,3,2]
+    const width = pixelColors.length / 40;
+    const startX = Math.floor(100 - width / 2);
+    
+    for (let i = 0; i < pixelColors.length; i++) {
+        const { closestNumber, closestIndex } = findClosestNumber(pixelColors[i], symbols_dict);
+        
+        const element_id = symbols_to_elements_id[closestIndex]
+        let sim_y = Math.floor(i / width)
+        let sim_x = i - sim_y*width + startX
+        // narysowanie w symulacji tego czegoś!
+        Simulation.instance.spawnExactElement(sim_x, sim_y, element_id);
+    }
+
+    //rerender screen!
+    ScreenHandler.instance.refreshScreen(Simulation.instance.cellGrid);
+}
+
+function loadImageFromFile(file){
+    asyncLoadImageFromFile(file, 4)
+    .then(({ modifiedImgDataUrl, pixelColors }) => {
+        // Call your function here or perform any other operations
+        paintDataOnScreen(modifiedImgDataUrl, pixelColors)
+    })
+    .catch(error => {
+        console.error("Error loading image:", error);
+    });
+}
+
+function ditherImage(imageData, numColors) {
+    const width = imageData.width;
+    const height = imageData.height;
+    const data = imageData.data;
+
+    // Convert the image to grayscale
+    for (let i = 0; i < data.length; i += 4) {
+        const brightness = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        data[i] = data[i + 1] = data[i + 2] = brightness;
+    }
+
+    // Dithering
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const index = (y * width + x) * 4;
+            const oldPixel = data[index];
+            const newPixel = Math.round(oldPixel * (numColors - 1) / 255) * (255 / (numColors - 1));
+            const quantError = oldPixel - newPixel;
+            data[index] = data[index + 1] = data[index + 2] = newPixel;
+
+            // Diffuse the error
+            if (x < width - 1) {
+                data[index + 4] += quantError * 7 / 16;
+            }
+            if (x > 0 && y < height - 1) {
+                data[index + width * 4 - 4] += quantError * 3 / 16;
+            }
+            if (y < height - 1) {
+                data[index + width * 4] += quantError * 5 / 16;
+            }
+            if (x < width - 1 && y < height - 1) {
+                data[index + width * 4 + 4] += quantError * 1 / 16;
+            }
+        }
+    }
+
+    return imageData;
+}
+
+function asyncLoadImageFromFile(file, numColors) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        let newWidth;
+        let pixelColors = []; // Array to store pixel colors
+
+        reader.onload = function() {
+            const img = new Image();
+            img.onload = function() {
+                // Calculate the aspect ratio
+                const aspectRatio = img.width / img.height;
+
+                // Calculate the width while maintaining the aspect ratio
+                newWidth = Math.round(40 * aspectRatio);
+
+                // Create a canvas element
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                // Resize the canvas
+                canvas.width = newWidth;
+                canvas.height = 40;
+
+                // Draw the image onto the canvas, resizing it
+                ctx.drawImage(img, 0, 0, newWidth, canvas.height);
+
+                // Get the image data
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+
+                // Convert the image to black and white
+                for (let i = 0; i < data.length; i += 4) {
+                    const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                    data[i] = avg; // Red
+                    data[i + 1] = avg; // Green
+                    data[i + 2] = avg; // Blue
+
+                    // Save pixel color to array
+                }
+
+                // Apply dithering with the specified number of colors
+                const ditheredImageData = ditherImage(imageData, numColors);
+                for (let i = 0; i < ditheredImageData.data.length; i += 4) {
+                    const avg = ditheredImageData.data[i]
+                    pixelColors.push(avg);
+                }
+                // Put the modified image data back onto the canvas
+                ctx.putImageData(ditheredImageData, 0, 0);
+
+                // Get the data URL of the modified image
+                const modifiedImgDataUrl = canvas.toDataURL('image/png');
+
+                console.log(`${modifiedImgDataUrl}`)
+                // Resolve the promise once all operations are completed
+                resolve({ modifiedImgDataUrl, pixelColors});
+            };
+
+            img.src = reader.result;
+        };
+
+        // Error handling for FileReader
+        reader.onerror = function(error) {
+            reject(error);
+        };
+
+        reader.readAsDataURL(file);
+    });
 }

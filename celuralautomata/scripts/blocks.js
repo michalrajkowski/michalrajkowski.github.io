@@ -1,6 +1,6 @@
 import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
-export { Block, Air, Sand, Iron, Water, Vortex, LivingMatter, Spawner}
+export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -146,6 +146,73 @@ class Water extends Block{
         }
         // try to move right
         if(this.tryMove(x,y, x+1, y+1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+
+        var randomDir = Math.random() < 0.5 ? 1 : -1;
+
+        if(this.tryMove(x,y, x+randomDir, y, grid)){
+            grid[y][x].done = true;
+            return
+        }
+
+        if(this.tryMove(x,y, x-randomDir, y, grid)){
+            grid[y][x].done = true;
+            return
+        }
+    }
+}
+
+class Cloud extends Block{
+    static letter_symbol = "~"
+    static letter_color = "#ffffff"
+    static block_name = "Cloud"
+    static block_desc = "Basic fluid but falls upward?"
+    static can_be_swaped = true
+    static density = 10
+
+    
+    static tryMove(o_x,o_y, n_x, n_y,grid){
+        if (!Simulation.isInGrid(n_x, n_y, grid)){
+            return false;
+        }
+        // get element
+        const this_cell = grid[n_y][n_x];
+        const this_block = BlocksHandler.getBlock(this_cell.blockId);
+        const original_cell = grid[o_y][o_x];
+        const original_block = BlocksHandler.getBlock(original_cell.blockId);
+
+        if (!this_block.can_be_swaped){
+            return false;
+        }
+
+        //compare density
+        if (!(this_block.density < original_block.density)){
+            return
+        }
+
+        // swap blocks
+        var temp = grid[n_y][n_x]
+        grid[n_y][n_x] = grid[o_y][o_x]
+        grid[o_y][o_x] = temp
+
+        return true;
+    }
+
+    static simulateBlock(x, y, grid){
+        // try to fall down
+        if(this.tryMove(x,y, x, y-1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+        // try to move left
+        if(this.tryMove(x,y, x-1, y-1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+        // try to move right
+        if(this.tryMove(x,y, x+1, y-1, grid)){
             grid[y][x].done = true;
             return
         }

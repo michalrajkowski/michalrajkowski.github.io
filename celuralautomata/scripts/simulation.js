@@ -108,6 +108,11 @@ export class Simulation {
         return Simulation.instance || new Simulation();
     }
 
+    spawnExactElement(x,y,elementId){
+        this.cellGrid[y][x].reset()
+        this.cellGrid[y][x].blockId=elementId
+    }
+
     spawnElement(x,y) {
         let id_to_spawn = UISelector.returnSelectedBlock()
         let radius = UISelector.returnSelectedBrush()
@@ -150,6 +155,8 @@ export class Simulation {
             }
         }
     }
+
+
 
     // Function to create a 2D array of cells
     createCellGrid(width, height) {
