@@ -1,4 +1,4 @@
-import { Block, Air, Sand, Iron, Water, Vortex, LivingMatter, Spawner, Cloud, Fish, Meat} from './blocks.js'
+import { Block, Air, Sand, Iron, Water, Vortex, LivingMatter, Spawner, Cloud, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower} from './blocks.js'
 
 export class BlocksHandler {
     static blockDict = {
@@ -12,6 +12,10 @@ export class BlocksHandler {
         7: Spawner,
         8: Fish,
         9: Meat,
+        10: Seed,
+        11: GrowthCone_Bamboo,
+        12: Bamboo_Up,
+        13: Bamboo_Flower,
     };
 
     // Define a static method to retrieve string for a given number

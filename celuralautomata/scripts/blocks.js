@@ -1,6 +1,6 @@
 import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
-export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat}
+export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -674,5 +674,163 @@ class Meat extends Block{
             grid[y][x].done = true;
             return
         }
+    }
+}
+
+class Seed extends Block{
+    static letter_symbol = "s"
+    static letter_color = "#3d2613"
+    static block_name = "Seed"
+    static block_desc = "Add a bit of water to create a plant"
+    static density = 390
+    static can_be_swaped = true
+    
+    static tryMove(o_x,o_y, n_x, n_y,grid){
+        if (!Simulation.isInGrid(n_x, n_y, grid)){
+            return false;
+        }
+        // get element
+        const this_cell = grid[n_y][n_x];
+        const this_block = BlocksHandler.getBlock(this_cell.blockId);
+        const original_cell = grid[o_y][o_x];
+        const original_block = BlocksHandler.getBlock(original_cell.blockId);
+
+        if (!this_block.can_be_swaped){
+            return false;
+        }
+
+        //compare density
+        //compare density
+        if (!(this_block.density < original_block.density)){
+            return
+        }
+
+        // swap blocks
+        var temp = grid[n_y][n_x]
+        grid[n_y][n_x] = grid[o_y][o_x]
+        grid[o_y][o_x] = temp
+
+        return true;
+    }
+
+    static checkIfWaterClose(o_x, o_y, grid){
+        for(let n_x = o_x - 1; n_x <= o_x + 1; n_x++){
+            for(let n_y = o_y - 1; n_y <= o_y + 1; n_y++){
+                // Check if it is inside grid!
+                if (!Simulation.isInGrid(n_x, n_y, grid)){
+                    continue
+                }
+                if (BlocksHandler.getBlock(grid[n_y][n_x].blockId).block_name == "Water") {
+                    return [n_y, n_x]
+                }
+            }
+        }
+        return [-1, -1]
+    }
+
+    static simulateBlock(x, y, grid){
+        // try to fall down
+        if(this.tryMove(x,y, x, y+1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+        // try to move left
+        if(this.tryMove(x,y, x-1, y+1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+        // try to move right
+        if(this.tryMove(x,y, x+1, y+1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+
+        // If contact with water, grow plant!
+        let [water_y, water_x] = this.checkIfWaterClose(x,y,grid)
+        if (water_x == -1 && water_y == -1){
+            return
+        }
+        // FOUND WATER!!!
+        grid[y][x].reset()
+        grid[y][x].blockId = BlocksHandler.getBlockId(GrowthCone_Bamboo)
+
+    }
+}
+
+class GrowthCone_Bamboo extends Block{
+    static letter_symbol = "^"
+    static letter_color = "#3d2613"
+    static block_name = "GrowthCone"
+    static block_desc = ""
+    static density = 390
+    static can_be_swaped = true
+    static visible_in_inspector = false
+    
+    static checkIfNotOccupied(x,y,grid){
+        if (!Simulation.isInGrid(x, y, grid)){
+            return false;
+        }
+        if (grid[y][x].blockId != BlocksHandler.getBlockId(Air) && grid[y][x].blockId != BlocksHandler.getBlockId(Water)){
+            return false
+        }
+        return true
+    }
+
+    static simulateBlock(x, y, grid){
+        // Try to grow upward?
+        // Growth slower / randomizer
+        if (Math.random() > 0.1){
+            return
+        }
+
+        // Can grow - choose option:
+        let rand_result = Math.random()
+        
+        console.log("We will grow")
+        // Option 1. Grow up
+        if (rand_result < 0.8){
+            if(!this.checkIfNotOccupied(x,y-1,grid)){
+                return
+            }
+            console.log("option AAA")
+            grid[y-1][x].reset()
+            grid[y-1][x].blockId = BlocksHandler.getBlockId(GrowthCone_Bamboo)
+            grid[y][x].reset()
+            grid[y][x].blockId = BlocksHandler.getBlockId(Bamboo_Up)
+            //Try to go up
+            return
+        }
+
+        // Option 2. Turn into flower?
+        if (rand_result >= 0.8){
+            console.log("option BBB")
+            grid[y][x].reset()
+            grid[y][x].blockId = BlocksHandler.getBlockId(Bamboo_Flower)
+            return
+        }
+
+    }
+}
+
+class Bamboo_Up extends Block{
+    static letter_symbol = "|"
+    static visible_in_inspector = false
+}
+
+class Bamboo_Flower extends Block{
+    static letter_symbol = "\""
+    static visible_in_inspector = false
+}
+
+class KineticBall extends Block{
+    static letter_symbol = "○"
+    static simulateBlock(x, y, grid){
+        // check if at rest?
+        // Add new vector of power
+        this_cell = grid[y][x]
+        if (this_cell.force.x == 0 && this_cell.force.y == 0){
+            return
+        }
+        
     }
 }
