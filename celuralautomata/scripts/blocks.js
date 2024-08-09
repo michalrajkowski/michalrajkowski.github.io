@@ -1,6 +1,6 @@
 import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
-export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower}
+export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -17,6 +17,112 @@ class Block{
 
     static simulateBlock(x, y, grid){
         
+    }
+}
+
+class KineticBall extends Block{
+    static letter_symbol = "○"
+    static gravity_rate = 0.5
+    static x_start_force_min = 5
+    static y_start_force_min = 5
+    static x_start_force_max = 15
+    static y_start_force_max = 15
+
+
+    static tryToMove(o_x, o_y, d_x, d_y, grid){
+
+    }
+
+    static tryMoveInAxis(o_x, o_y, grid, axis_string){
+        console.log("Try to move")
+        let x = o_x
+        let y = o_y
+        if (axis_string == 'x'){
+            let n_x = o_x + (grid[y][x].force.x > 0 ? 1 : -1);
+            console.log(n_x - o_x)
+            if (!Simulation.isInGrid(n_x, y, grid)){
+                grid[y][x].force.x *= -1
+                return
+            }
+            if(grid[y][n_x].blockId != BlocksHandler.getBlockId(Air)){
+                grid[y][x].force.x *= -1
+                return
+            }
+            let temp = grid[y][n_x]
+            grid[y][n_x] = grid[y][x]
+            grid[y][x] = temp
+        }else{
+            let n_y = o_y + (grid[y][x].force.y > 0 ? 1 : -1);
+            if (!Simulation.isInGrid(x, n_y, grid)){
+                if (Math.sign(grid[y][x].force.y) < 0){
+                    grid[y][x].force.y *= -1
+                    return
+                }else{
+                    grid[y][x].force.y = 0
+                    grid[y][x].force.x = 0
+                }
+                return
+            }
+            if(grid[n_y][x].blockId != BlocksHandler.getBlockId(Air)){
+                if (Math.sign(grid[y][x].force.y) < 0){
+                    grid[y][x].force.y *= -1
+                    return
+                }else{
+                    grid[y][x].force.y = 0
+                    grid[y][x].force.x = 0
+                }
+                return
+            }
+            let temp = grid[n_y][x]
+            grid[n_y][x] = grid[y][x]
+            grid[y][x] = temp
+        }
+    }
+    static preSimulationHook(x,y,grid){
+        let this_cell = grid[y][x]
+        if (this_cell.force.x == 0 && this_cell.force.y == 0){
+            this_cell.force.x = Math.random()*this.x_start_force_max* (Math.random()> 0.5 ? 1 : -1);
+            this_cell.force.y = Math.random()*this.y_start_force_max*(-1)
+        }
+    }
+
+    static postSimulationHook(x,y,grid){
+
+    }
+    static kinematicBehaviour(x,y,grid){
+        // Try to move in directions:
+        // Decide if to move X or Y:
+        let this_cell = grid[y][x]
+        console.log(this_cell.force)
+        let primaryAxis, secondaryAxis;
+        let frame_count;
+        if (Math.abs(this_cell.force.x) > Math.abs(this_cell.force.y)) {
+            primaryAxis = 'x';
+            secondaryAxis = 'y';
+            frame_count = Math.floor(Math.abs(this_cell.force.x) / Math.abs(this_cell.force.y));
+        } else {
+            primaryAxis = 'y';
+            secondaryAxis = 'x';
+            frame_count = Math.floor(Math.abs(this_cell.force.y) / Math.abs(this_cell.force.x));
+        }
+        if (Math.abs(this_cell.force.x) < 0.0001){
+            secondaryAxis = 'y'
+            primaryAxis = 'y'
+        }
+        if ((Simulation.getInstance().getRealFrames() % frame_count) == 0) {
+            this.tryMoveInAxis(x,y,grid,secondaryAxis)
+        } else {
+            this.tryMoveInAxis(x,y,grid,primaryAxis)
+        }
+        // Slow movement?
+        if (this_cell.force.y != 0){
+            this_cell.force.y += this.gravity_rate
+        }
+    }
+    static simulateBlock(x, y, grid){
+        this.preSimulationHook(x,y,grid)
+        this.kinematicBehaviour(x,y,grid)
+        this.postSimulationHook(x,y,grid)
     }
 }
 
@@ -677,13 +783,14 @@ class Meat extends Block{
     }
 }
 
-class Seed extends Block{
-    static letter_symbol = "s"
+class Seed extends KineticBall{
+    static letter_symbol = "⊚"
     static letter_color = "#3d2613"
     static block_name = "Seed"
     static block_desc = "Add a bit of water to create a plant"
     static density = 390
     static can_be_swaped = true
+    static visible_in_inspector = true
     
     static tryMove(o_x,o_y, n_x, n_y,grid){
         if (!Simulation.isInGrid(n_x, n_y, grid)){
@@ -729,6 +836,15 @@ class Seed extends Block{
     }
 
     static simulateBlock(x, y, grid){
+        let this_cell = grid[y][x]
+        if(this_cell.force.x == -1 && this_cell.force.y == -1){
+            this_cell.force.x = Math.random()*this.x_start_force_max* (Math.random()> 0.5 ? 1 : -1);
+            this_cell.force.y = Math.random()*this.y_start_force_max*(-1)
+        }
+        if(this_cell.force.x != 0 || this_cell.force.y != 0){
+            this.kinematicBehaviour(x,y,grid)
+            return
+        }
         // try to fall down
         if(this.tryMove(x,y, x, y+1, grid)){
             grid[y][x].done = true;
@@ -820,17 +936,21 @@ class Bamboo_Up extends Block{
 class Bamboo_Flower extends Block{
     static letter_symbol = "\""
     static visible_in_inspector = false
-}
 
-class KineticBall extends Block{
-    static letter_symbol = "○"
-    static simulateBlock(x, y, grid){
-        // check if at rest?
-        // Add new vector of power
-        this_cell = grid[y][x]
-        if (this_cell.force.x == 0 && this_cell.force.y == 0){
-            return
+    static simulateBlock(x,y,grid){
+        if(Math.random() < 0.0002){
+            // Spawn seed?
+            // check if above is fine
+            if (!Simulation.isInGrid(x, y-1, grid)){
+                return
+            }
+            if(grid[y-1][x].blockId != BlocksHandler.getBlockId(Air)){
+                return
+            }
+            grid[y-1][x].reset()
+            grid[y-1][x].blockId = BlocksHandler.getBlockId(Seed)
+            grid[y-1][x].force.x = -1
+            grid[y-1][x].force.y = -1
         }
-        
     }
 }

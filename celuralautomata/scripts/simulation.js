@@ -108,6 +108,10 @@ export class Simulation {
         return Simulation.instance || new Simulation();
     }
 
+    getRealFrames(){
+        return this.real_frame
+    }
+
     spawnExactElement(x,y,elementId){
         this.cellGrid[y][x].reset()
         this.cellGrid[y][x].blockId=elementId
