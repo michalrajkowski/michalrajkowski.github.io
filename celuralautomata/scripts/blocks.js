@@ -1,6 +1,6 @@
 import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
-export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall}
+export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -133,7 +133,6 @@ class Air extends Block{
     static block_desc = "Blank space"
     static density = 0
     static simulateBlock(x, y, grid){
-        
     }
 }
 
@@ -902,13 +901,11 @@ class GrowthCone_Bamboo extends Block{
         // Can grow - choose option:
         let rand_result = Math.random()
         
-        console.log("We will grow")
         // Option 1. Grow up
         if (rand_result < 0.8){
             if(!this.checkIfNotOccupied(x,y-1,grid)){
                 return
             }
-            console.log("option AAA")
             grid[y-1][x].reset()
             grid[y-1][x].blockId = BlocksHandler.getBlockId(GrowthCone_Bamboo)
             grid[y][x].reset()
@@ -919,7 +916,6 @@ class GrowthCone_Bamboo extends Block{
 
         // Option 2. Turn into flower?
         if (rand_result >= 0.8){
-            console.log("option BBB")
             grid[y][x].reset()
             grid[y][x].blockId = BlocksHandler.getBlockId(Bamboo_Flower)
             return
@@ -931,11 +927,87 @@ class GrowthCone_Bamboo extends Block{
 class Bamboo_Up extends Block{
     static letter_symbol = "|"
     static visible_in_inspector = false
+    static density = 390
+    
+    static simulateBlock(x,y,grid){
+        if (!Simulation.isInGrid(x, y+1, grid)){
+            return
+        }
+        console.log(`${x} ${y}`)
+        console.log(`${x} ${y+1}`)
+        console.log(`${grid[y+1][x].blockId}`)
+        let block_here = BlocksHandler.getBlock(grid[y][x].blockId)
+        let block_below = BlocksHandler.getBlock(grid[y+1][x].blockId)
+        if(block_below.density >= block_here.density){
+            console.log("No break?")
+            return
+        }
+        console.log("BREAKS!")
+        console.log(grid[y+1][x].blockId)
+        console.log(grid[y][x].blockId)
+        // breaks!
+        grid[y][x].reset()
+        grid[y][x].blockId = BlocksHandler.getBlockId(Bamboo_Chopped)
+    }
+}
+
+class Bamboo_Chopped extends Block{
+    static letter_symbol = "−"
+    static visible_in_inspector = false
+    static density = 250
+    static can_be_swaped = true
+
+    static tryMove(o_x,o_y, n_x, n_y,grid){
+        if (!Simulation.isInGrid(n_x, n_y, grid)){
+            return false;
+        }
+        // get element
+        const this_cell = grid[n_y][n_x];
+        const this_block = BlocksHandler.getBlock(this_cell.blockId);
+        const original_cell = grid[o_y][o_x];
+        const original_block = BlocksHandler.getBlock(original_cell.blockId);
+
+        if (!this_block.can_be_swaped){
+            return false;
+        }
+
+        //compare density
+        //compare density
+        if (!(this_block.density < original_block.density)){
+            return
+        }
+
+        // swap blocks
+        var temp = grid[n_y][n_x]
+        grid[n_y][n_x] = grid[o_y][o_x]
+        grid[o_y][o_x] = temp
+
+        return true;
+    }
+
+    static simulateBlock(x, y, grid){
+        // try to fall down
+        if(this.tryMove(x,y, x, y+1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+        // try to move left
+        if(this.tryMove(x,y, x-1, y+1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+        // try to move right
+        if(this.tryMove(x,y, x+1, y+1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+    }
 }
 
 class Bamboo_Flower extends Block{
     static letter_symbol = "\""
     static visible_in_inspector = false
+    static density = 390
 
     static simulateBlock(x,y,grid){
         if(Math.random() < 0.0002){
@@ -951,6 +1023,25 @@ class Bamboo_Flower extends Block{
             grid[y-1][x].blockId = BlocksHandler.getBlockId(Seed)
             grid[y-1][x].force.x = -1
             grid[y-1][x].force.y = -1
+        }else{
+            if (!Simulation.isInGrid(x, y+1, grid)){
+                return
+            }
+            console.log(`${x} ${y}`)
+            console.log(`${x} ${y+1}`)
+            console.log(`${grid[y+1][x].blockId}`)
+            let block_here = BlocksHandler.getBlock(grid[y][x].blockId)
+            let block_below = BlocksHandler.getBlock(grid[y+1][x].blockId)
+            if(block_below.density >= block_here.density){
+                console.log("No break?")
+                return
+            }
+            console.log("BREAKS!")
+            console.log(grid[y+1][x].blockId)
+            console.log(grid[y][x].blockId)
+            // breaks!
+            grid[y][x].reset()
+            grid[y][x].blockId = BlocksHandler.getBlockId(Bamboo_Chopped)
         }
     }
 }
