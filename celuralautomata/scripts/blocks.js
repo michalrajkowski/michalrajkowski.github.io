@@ -9,6 +9,7 @@ class Block{
     static can_be_swaped = false
     static density = 0
     static is_food = false
+    static visible_in_inspector = true
 
     static getLetterSymbol(){
         return this.letter_symbol
@@ -105,7 +106,6 @@ class Water extends Block{
     static block_desc = "Basic fluid"
     static can_be_swaped = true
     static density = 300
-
     
     static tryMove(o_x,o_y, n_x, n_y,grid){
         if (!Simulation.isInGrid(n_x, n_y, grid)){

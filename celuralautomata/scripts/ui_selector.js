@@ -69,7 +69,9 @@ export class UISelector{
         const panel = document.getElementById('elementsButtonPanel');
         const blockDict = BlocksHandler.blockDict;
         Object.entries(blockDict).forEach(([key, value]) => {
-            // console.log(value)
+            if(!value.visible_in_inspector){
+                return;
+            }
             const button = document.createElement('button');
             button.classList.add('panel-button');
 
