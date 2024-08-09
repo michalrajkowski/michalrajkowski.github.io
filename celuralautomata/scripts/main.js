@@ -22,8 +22,8 @@ export class Cell {
 
     reset(){
         this.blockId=0
-        this.forceX=0
-        this.forceY=0
+        this.force.x=0
+        this.force.y=0
         this.used_this_iteration=false
         this.done=false
     }

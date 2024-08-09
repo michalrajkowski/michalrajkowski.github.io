@@ -1,6 +1,6 @@
 import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
-export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner}
+export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -8,6 +8,7 @@ class Block{
     static block_desc = "basic block description"
     static can_be_swaped = false
     static density = 0
+    static is_food = false
 
     static getLetterSymbol(){
         return this.letter_symbol
@@ -446,5 +447,232 @@ class LivingMatter extends Block {
             }
         }
         return false; 
+    }
+}
+
+class Fish extends Block{
+    static letter_symbol = "∝"
+    static letter_color = "#ff792b"
+    static block_name = "Fish"
+    static block_desc = "Swims in water"
+    static density = 400
+    static can_be_swaped = true
+
+    
+    static tryMove(o_x,o_y, n_x, n_y,grid){
+        if (!Simulation.isInGrid(n_x, n_y, grid)){
+            return false;
+        }
+        // get element
+        const this_cell = grid[n_y][n_x];
+        const this_block = BlocksHandler.getBlock(this_cell.blockId);
+        const original_cell = grid[o_y][o_x];
+        const original_block = BlocksHandler.getBlock(original_cell.blockId);
+
+        if (!this_block.can_be_swaped){
+            return false;
+        }
+
+        //compare density
+        //compare density
+        if (!(this_block.density < original_block.density)){
+            return
+        }
+
+        // swap blocks
+        var temp = grid[n_y][n_x]
+        grid[n_y][n_x] = grid[o_y][o_x]
+        grid[o_y][o_x] = temp
+
+        return true;
+    }
+
+    static checkIfWaterClose(o_x, o_y, grid){
+        for(let n_x = o_x - 1; n_x <= o_x + 1; n_x++){
+            for(let n_y = o_y - 1; n_y <= o_y + 1; n_y++){
+                // Check if it is inside grid!
+                if (!Simulation.isInGrid(n_x, n_y, grid)){
+                    continue
+                }
+                if (BlocksHandler.getBlock(grid[n_y][n_x].blockId).block_name == "Water") {
+                    return [n_y, n_x]
+                }
+            }
+        }
+        return [-1, -1]
+    }
+
+    static randomLog2(){
+        const startCategory = 6.5;
+        const stepSize = 0.5;
+        let num = Math.random() * 100;
+        let log2_num = Math.log2(num)
+        const index = Math.floor((log2_num) / stepSize);
+        return index > 0 ? index : 13;
+    }
+
+    static reversedRandomLog2(){
+        let index = this.randomLog2()
+        index -=13
+        index = Math.abs(index)
+        return index
+    }
+
+    static nextRasterizedPoint(x1,y1,x2,y2){
+        let dx = x2 - x1
+        let dy = y2 - y1
+        if (Math.abs(dx) > Math.abs(dy)){
+            return [Math.sign(dx)+x1, y1]
+        }else{
+            return [x1,Math.sign(dy)+y1]
+        }
+    }
+
+    static simulateBlock(x, y, grid){
+        // Check if water close
+        let [water_y, water_x] = this.checkIfWaterClose(x,y,grid)
+
+        if (water_y == -1 && water_x == -1){
+            // try to fall down
+            if(this.tryMove(x,y, x, y+1, grid)){
+                grid[y][x].done = true;
+                return
+            }
+            // try to move left
+            if(this.tryMove(x,y, x-1, y+1, grid)){
+                grid[y][x].done = true;
+                return
+            }
+            // try to move right
+            if(this.tryMove(x,y, x+1, y+1, grid)){
+                grid[y][x].done = true;
+                return
+            }
+            // this means we are laying on the ground?
+
+            // jump up in agony + rng to DIE.
+            if (Math.random() < 0.05){
+                // DIE
+                let this_cell = grid[y][x];
+                this_cell.reset()
+                // Spawn Meat
+                this_cell.blockId = BlocksHandler.getBlockId(Meat);
+                this_cell.done = true
+                return
+            }
+            // Do a flop!
+            if(this.tryMove(x,y, x, y-1, grid)){
+                grid[y][x].done = true;
+            }
+            return
+        }
+        
+        // Random Swimmer algorithm man
+
+        // checks if has current swim directions
+        let swim_directions = {
+            x: grid[y][x].force.x,
+            y: grid[y][x].force.y
+        };
+        if (swim_directions.x == 0 && swim_directions.y == 0){
+            // there is not a swim direction
+            // so generate new one:
+            let r_x = this.reversedRandomLog2()
+            let r_y = this.reversedRandomLog2()
+            let sign_x = Math.random() < 0.5 ? -1 : 1
+            let sign_y = Math.random() < 0.5 ? -1 : 1
+            let n_x = r_x * sign_x + x
+            let n_y = r_y * sign_y + y
+
+            if (!Simulation.isInGrid(n_x, n_y, grid)){
+                return;
+            }
+
+            if (grid[n_y][n_x].blockId == BlocksHandler.getBlockId(Water)){
+                grid[y][x].force.x = n_x
+                grid[y][x].force.y = n_y
+            }
+            return
+        }
+
+        // Swimming in direction:
+        // - check if already at the direction?
+        if (x == grid[y][x].force.x && y == grid[y][x].force.y){
+            grid[y][x].force.x = 0
+            grid[y][x].force.y = 0
+            return
+        }
+        // Swim in the direction:
+        let [nextSwimStep_x, nextSwimStep_y] = this.nextRasterizedPoint(x,y,grid[y][x].force.x, grid[y][x].force.y)
+        if(this.tryMove(x,y, nextSwimStep_x, nextSwimStep_y, grid)){
+            grid[y][x].done = true;
+            return
+        }else{
+            grid[y][x].force.x = 0
+            grid[y][x].force.y = 0
+            return
+        }
+
+        // if there is fish brain logic
+        // - looking for food 
+        // - procreate?
+        
+    }
+}
+
+class Meat extends Block{
+    static letter_symbol = "⊕"
+    static letter_color = "#f01d55"
+    static block_name = "Meat"
+    static block_desc = "Is source of food"
+    static density = 500
+    static can_be_swaped = true
+    static is_food = true
+
+    
+    static tryMove(o_x,o_y, n_x, n_y,grid){
+        if (!Simulation.isInGrid(n_x, n_y, grid)){
+            return false;
+        }
+        // get element
+        const this_cell = grid[n_y][n_x];
+        const this_block = BlocksHandler.getBlock(this_cell.blockId);
+        const original_cell = grid[o_y][o_x];
+        const original_block = BlocksHandler.getBlock(original_cell.blockId);
+
+        if (!this_block.can_be_swaped){
+            return false;
+        }
+
+        //compare density
+        //compare density
+        if (!(this_block.density < original_block.density)){
+            return
+        }
+
+        // swap blocks
+        var temp = grid[n_y][n_x]
+        grid[n_y][n_x] = grid[o_y][o_x]
+        grid[o_y][o_x] = temp
+
+        return true;
+    }
+
+    static simulateBlock(x, y, grid){
+        // try to fall down
+        if(this.tryMove(x,y, x, y+1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+        // try to move left
+        if(this.tryMove(x,y, x-1, y+1, grid)){
+            grid[y][x].done = true;
+            return
+        }
+        // try to move right
+        if(this.tryMove(x,y, x+1, y+1, grid)){
+            grid[y][x].done = true;
+            return
+        }
     }
 }
