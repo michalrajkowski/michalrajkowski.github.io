@@ -1,7 +1,7 @@
 import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
 export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped, Fire,
-Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC}
+Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC, Pipe_UR, Pipe_DR, Pipe_UL, Pipe_DL, Pipe_UD, Pipe_LR, Pipe_NR, Pipe_NL, Pipe_NU, Pipe_ND}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -14,6 +14,7 @@ class Block{
     static is_burnable = false
     static burn_rate = 1.0
     static is_pipe = false
+    static is_thicc_pipe = false
 
     static getLetterSymbol(){
         return this.letter_symbol
@@ -1280,7 +1281,7 @@ class Pipe_Input_Output extends Block{
 }
 
 class Pipe extends Block{
-    static letter_symbol = "┌"
+    static letter_symbol = "┼"
     static letter_color = "#1b3612"
     static can_be_swaped = false
     static block_name = "Pipe"
@@ -1313,8 +1314,68 @@ class Pipe extends Block{
         // Pipe filler behaviour?
         this.pipe_filler_behaviour(x,y,grid)
     }
+    static find_valve_or_pipe(x,y,grid){
+        if (!(Simulation.isInGrid(x,y,grid))){
+            return false
+        }
+        let this_block = BlocksHandler.getBlock(grid[y][x].blockId)
+        let this_cell = grid[y][x]
+        if (this_block.is_pipe || this_cell.blockId == BlocksHandler.getBlockId(Pipe_Input_Output)){
+            return true
+        }
+        return false
+    }
 
     static pipe_idle_behaviour(x,y,grid){
+        // change my type to correct pipe type:
+        if (this.is_thicc_pipe == false){
+            // find all nei pipes
+            let nei_pipes = [false,false,false,false]
+            nei_pipes[0] = this.find_valve_or_pipe(x,y-1,grid)
+            nei_pipes[1] = this.find_valve_or_pipe(x+1,y,grid)
+            nei_pipes[2] = this.find_valve_or_pipe(x,y+1,grid)
+            nei_pipes[3] = this.find_valve_or_pipe(x-1,y,grid)
+            // take from dict based on nei flags
+
+            switch (JSON.stringify(nei_pipes)) {
+                // wszystkie trójki
+                case JSON.stringify([false, true, true, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_NU)
+                    break;
+                case JSON.stringify([true, false, true, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_NR)
+                    break;
+                case JSON.stringify([true, true, false, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_ND)
+                    break;
+                case JSON.stringify([true, true, true, false]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_NL)
+                    break;
+                // All bents
+                case JSON.stringify([true, true, false, false]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_UR)
+                    break;
+                case JSON.stringify([true, false, true, false]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_UD)
+                    break;
+                case JSON.stringify([true, false, false, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_UL)
+                    break;
+                case JSON.stringify([false, true, true, false]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_DR)
+                    break;
+                case JSON.stringify([false, true, false, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_LR)
+                    break;
+                case JSON.stringify([false, false, true, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_DL)
+                    break;
+                // Special case if not fall into anything
+                default:
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe)
+                    break
+            }
+        }
 
     }
 
@@ -1436,4 +1497,56 @@ class Pipe extends Block{
 class Pipe_THICC extends Pipe{
     static letter_symbol = "║"
     static visible_in_inspector = false       
+    static is_thicc_pipe = true
 }
+
+class Pipe_UR extends Pipe{
+    static letter_symbol = "└"
+    static visible_in_inspector = false       
+}
+
+class Pipe_DR extends Pipe{
+    static letter_symbol = "┌"
+    static visible_in_inspector = false       
+}
+
+class Pipe_UL extends Pipe{
+    static letter_symbol = "┘"
+    static visible_in_inspector = false       
+}
+
+class Pipe_DL extends Pipe{
+    static letter_symbol = "┐"
+    static visible_in_inspector = false       
+}
+
+class Pipe_UD extends Pipe{
+    static letter_symbol = "│"
+    static visible_in_inspector = false       
+}
+
+class Pipe_LR extends Pipe{
+    static letter_symbol = "─"
+    static visible_in_inspector = false       
+}
+
+class Pipe_NR extends Pipe{
+    static letter_symbol = "┤"
+    static visible_in_inspector = false       
+}
+
+class Pipe_NL extends Pipe{
+    static letter_symbol = "├"
+    static visible_in_inspector = false       
+}
+
+class Pipe_NU extends Pipe{
+    static letter_symbol = "┬"
+    static visible_in_inspector = false       
+}
+
+class Pipe_ND extends Pipe{
+    static letter_symbol = "┴"
+    static visible_in_inspector = false       
+}
+
