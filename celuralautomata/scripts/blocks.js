@@ -1,7 +1,7 @@
 import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
 export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped, Fire,
-Fire_2,Fire_3,Fire_4}
+Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -13,6 +13,7 @@ class Block{
     static visible_in_inspector = true
     static is_burnable = false
     static burn_rate = 1.0
+    static is_pipe = false
 
     static getLetterSymbol(){
         return this.letter_symbol
@@ -25,6 +26,8 @@ class Block{
 
 class KineticBall extends Block{
     static letter_symbol = "○"
+    static block_name = "Kinetic Ball"
+    static block_desc = "Bounces like crazy"
     static gravity_rate = 0.5
     static x_start_force_min = 5
     static y_start_force_min = 5
@@ -1065,6 +1068,8 @@ class Bamboo_Flower extends Block{
 class Fire extends Block{
     static letter_symbol = "█"
     static letter_color = "#ff580a"
+    static block_name = "Fire"
+    static block_desc = "Burn things down!"
     static visible_in_inspector = false
     static density = 390
     static visible_in_inspector = true
@@ -1121,7 +1126,14 @@ class Fire extends Block{
 
         if (!this_block.can_be_swaped){
             return false;
+        }if (!Simulation.isInGrid(n_x, n_y, grid)){
+            return;
         }
+        // check if it is a pipe
+        //next_block = BlocksHandler.getBlock(grid[n_y][n_x])
+        //if (!next_block instanceof Pipe){
+        //    return
+        //}
 
         //compare density
         //compare density
@@ -1179,4 +1191,249 @@ class Fire_4 extends Fire{
     static postSimulationHook(x,y,grid){
         grid[y][x].blockId = BlocksHandler.getBlockId(Cloud)
     }
+}
+
+class Human extends Block{
+    static letter_symbol = "☻"
+    static letter_color = "#ffffff"
+    static block_name = "Human"
+    static block_desc = "Complex inteligent life form. Has ideas and follows them"
+    static visible_in_inspector = true;
+
+    handle_physics(){
+        // falls down if there is not a filled space below.
+        // after fall damage?
+        // take mark with you?
+    }
+
+    static simulateBlock(x, y, grid){
+        // handle physics
+
+        // handle human "state?"
+
+        // perform strategies
+
+        // choose strategies
+
+    }
+}
+
+class Human_2 extends Human{
+    static letter_symbol = "☺"
+    static block_name = "Human v2"
+    static block_desc = "Different tribe of human that is in conflict with the full-color one"
+}
+
+class IdeaMark extends Block{
+
+}
+
+class Pipe_Input_Output extends Block{
+    static letter_symbol = "V"
+    static letter_color = "#ffffff"
+    static can_be_swaped = false
+    static block_name = "Pipe I/O"
+    static block_desc = "Works as Input if above pipe, and output if left/right/below"
+    static density = 999
+    static simulateBlock(x, y, grid){
+        // if pipe below - try to insert block above me to it!
+        let n_y = y+1
+        let n_x = x
+        if (!Simulation.isInGrid(n_x, n_y, grid)){
+            return;
+        }
+        // check if it is a pipe
+        let next_block = BlocksHandler.getBlock(grid[n_y][n_x].blockId)
+        if (next_block.is_pipe == false){
+            return
+        }
+        if (!(grid[n_y][n_x].force.x == 0 && grid[n_y][n_x].force.y == 0)){
+            return
+        }
+        // We found pipe which can be fed!
+        // check block above
+        let b_y = y-1
+        let b_x = x
+        if (!Simulation.isInGrid(b_x, b_y, grid)){
+            return;
+        }
+        // check if it is sth else than air
+        let block_below = BlocksHandler.getBlock(grid[b_y][b_x].blockId)
+        let cell_below = grid[b_y][b_x]
+        console.log(cell_below.blockId)
+        if (cell_below.blockId == BlocksHandler.getBlockId(Air) || block_below.is_pipe || cell_below.blockId == BlocksHandler.getBlockId(Pipe_Input_Output)){
+            return
+        }
+        // Block is valid!
+        // Pipe the block
+        // - insert its id inside the pump, make it occupied
+        // - delete block above
+        const block_id = grid[b_y][b_x].blockId
+        grid[n_y][n_x].done = true
+        grid[n_y][n_x].force.x = -1
+        grid[n_y][n_x].force.y = block_id
+        // thick the pipe
+        grid[n_y][n_x].blockId = BlocksHandler.getBlockId(Pipe_THICC)
+        grid[b_y][b_x].reset()
+        console.log("Sucked block")
+    }
+}
+
+class Pipe extends Block{
+    static letter_symbol = "┌"
+    static letter_color = "#1b3612"
+    static can_be_swaped = false
+    static block_name = "Pipe"
+    static block_desc = "Transport blocks from one edge to the other. Requires Pipe I/O blocks to work"
+    static density = 999
+    static is_pipe = true
+    static simulateBlock(x, y, grid){
+        // if idle - choose pipe shape
+        
+        // if not idle : transport block
+
+        //-1 / blockid - is transporting block
+        // 0 / 0 - idle
+        // 1 / 1 - occupied helper? (or some move counter?)
+        let this_cell = grid[y][x]
+        
+        // Pipe Idle behaviour
+        if (this_cell.force.x == 0 && this_cell.force.y == 0){
+            this.pipe_idle_behaviour(x,y,grid)
+            return
+        }
+
+        // Transport block behaviour.
+        // the force.y value is the transported block id.
+        if (this_cell.force.x == -1){
+            this.pipe_transport_behaviour(x,y,grid)
+            return
+        }
+
+        // Pipe filler behaviour?
+        this.pipe_filler_behaviour(x,y,grid)
+    }
+
+    static pipe_idle_behaviour(x,y,grid){
+
+    }
+
+    static pipe_filler_behaviour(x,y,grid){
+        // check if still pointing to the correct point
+        // if not delete itself
+        let pointing_x = grid[y][x].force.x
+        let pointing_y = grid[y][x].force.y
+        if(grid[pointing_y][pointing_x].force.x == -1){
+            return
+        }
+
+        // it is not an occupied/transporter pipe. Delete my fake spot
+        grid[y][x].force.x = 0
+        grid[y][x].force.y = 0
+    }
+
+    static pipe_transport_behaviour(x,y,grid){
+        // look for exits left / right / down
+        const exit_directions = [
+            [0, 1],  // Down
+            [-1, 0], // Left
+            [1, 0]   // Right
+        ];
+        
+        for (let i = 0; i < exit_directions.length; i++) {
+            console.log(`Iteration: ${i}`)
+            const n_x = x + exit_directions[i][0];
+            const n_y = y + exit_directions[i][1];
+            console.log(`${n_x}, ${n_y}`)
+            // Check if the new position is within bounds
+            if (!Simulation.isInGrid(n_x, n_y, grid)){
+                continue;
+            }
+            //
+            if (grid[n_y][n_x].blockId != BlocksHandler.getBlockId(Pipe_Input_Output)){
+                continue
+            }
+            // if pipe_I/O found, pump_out the item
+            const p_x = n_x + exit_directions[i][0];
+            const p_y = n_y + exit_directions[i][1];
+            if (!Simulation.isInGrid(p_x, p_y, grid)){
+                continue;
+            }
+            // Check if not occupied
+            if (grid[p_y][p_x].blockId != BlocksHandler.getBlockId(Air)){
+                continue
+            }
+            // Pump it out here!
+            console.log(`I am ${x} ${y}. Block will be thrown away ${p_x} ${p_y} (${p_x - x},${p_y - y})`)
+            const piped_block_id = Math.round(grid[y][x].force.y) 
+            grid[p_y][p_x].blockId = piped_block_id
+            grid[p_y][p_x].done = true
+
+            // Clear the pipe!
+            grid[y][x].blockId = BlocksHandler.getBlockId(Pipe)
+            grid[y][x].force.x = x
+            grid[y][x].force.y = y
+            return
+        }
+
+        // Look for pipes up / right / left / down
+        
+        // If pipe is not occupied:
+        // - (1) change that pipe type and content
+        // - (2) make it busy
+        // - (3) change itself to normal
+        // - (4) create empty fake slot on itself (pointing to the new liquid slot)
+        const pipes_directions = [
+            [0, -1], // Up
+            [0, 1],  // Down
+            [-1, 0], // Left
+            [1, 0]   // Right
+        ];
+        
+        for (let i = 0; i < pipes_directions.length; i++) {
+            console.log(`Iteration PIPES: ${i}`)
+            const n_x = x + pipes_directions[i][0];
+            const n_y = y + pipes_directions[i][1];
+            
+            // check if empty and if it is a pipe and if pipe can transport:
+            if (!Simulation.isInGrid(n_x, n_y, grid)){
+                continue;
+            }
+            console.log(`can inspect place`)
+            // check if it is a pipe
+            let next_block = BlocksHandler.getBlock(grid[n_y][n_x].blockId)
+            if (!(next_block.is_pipe)){
+                continue
+            }
+            console.log(`Pipe Exists`)
+            if (!(grid[n_y][n_x].force.x == 0 && grid[n_y][n_x].force.y == 0)){
+                continue
+            }
+            console.log(`Optimal force`)
+            // bingo! do the important stuff
+            // (1) change that pipe type and content
+            grid[n_y][n_x].force.x = grid[y][x].force.x
+            grid[n_y][n_x].force.y = grid[y][x].force.y
+
+            // TODO: change pipe appearance to THICC
+            grid[n_y][n_x].blockId = BlocksHandler.getBlockId(Pipe_THICC)
+
+            // (2) change it to busy
+            grid[n_y][n_x].done = true
+
+            // (3) change itself to normal
+            // TODO: UNTHIC MYSELF
+            grid[y][x].blockId = BlocksHandler.getBlockId(Pipe)
+
+            // (4) create empty fake slot on itself (pointing to the new liquid slot)
+            grid[y][x].force.x = n_x
+            grid[y][x].force.y = n_y
+            return
+        }
+
+    }
+}
+class Pipe_THICC extends Pipe{
+    static letter_symbol = "║"
+    static visible_in_inspector = false       
 }

@@ -1,5 +1,5 @@
 import { Block, Air, Sand, Iron, Water, Vortex, LivingMatter, Spawner, Cloud, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped, Fire,
-Fire_2,Fire_3,Fire_4} from './blocks.js'
+Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC} from './blocks.js'
 
 export class BlocksHandler {
     static blockDict = {
@@ -23,6 +23,11 @@ export class BlocksHandler {
         17: Fire_2,
         18: Fire_3,
         19: Fire_4,
+        20: Human,
+        21: Human_2,
+        22: Pipe_Input_Output,
+        23: Pipe,
+        24: Pipe_THICC
     };
 
     // Define a static method to retrieve string for a given number
