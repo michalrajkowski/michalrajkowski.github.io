@@ -926,6 +926,7 @@ class GrowthCone_Bamboo extends Block{
 
 class Bamboo_Up extends Block{
     static letter_symbol = "|"
+    static letter_color = "#0d540f"
     static visible_in_inspector = false
     static density = 390
     
@@ -953,6 +954,7 @@ class Bamboo_Up extends Block{
 
 class Bamboo_Chopped extends Block{
     static letter_symbol = "−"
+    static letter_color = "#43751a"
     static visible_in_inspector = false
     static density = 250
     static can_be_swaped = true
@@ -1006,6 +1008,7 @@ class Bamboo_Chopped extends Block{
 
 class Bamboo_Flower extends Block{
     static letter_symbol = "\""
+    static letter_color = "#52f041"
     static visible_in_inspector = false
     static density = 390
 
