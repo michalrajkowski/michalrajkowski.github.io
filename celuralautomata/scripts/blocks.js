@@ -1,6 +1,7 @@
 import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
-export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped}
+export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped, Fire,
+Fire_2,Fire_3,Fire_4}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -10,6 +11,8 @@ class Block{
     static density = 0
     static is_food = false
     static visible_in_inspector = true
+    static is_burnable = false
+    static burn_rate = 1.0
 
     static getLetterSymbol(){
         return this.letter_symbol
@@ -790,6 +793,8 @@ class Seed extends KineticBall{
     static density = 390
     static can_be_swaped = true
     static visible_in_inspector = true
+    static is_burnable = true
+    static burn_rate = 0.5
     
     static tryMove(o_x,o_y, n_x, n_y,grid){
         if (!Simulation.isInGrid(n_x, n_y, grid)){
@@ -880,6 +885,8 @@ class GrowthCone_Bamboo extends Block{
     static density = 390
     static can_be_swaped = true
     static visible_in_inspector = false
+    static is_burnable = true
+    static burn_rate = 1.0
     
     static checkIfNotOccupied(x,y,grid){
         if (!Simulation.isInGrid(x, y, grid)){
@@ -929,6 +936,8 @@ class Bamboo_Up extends Block{
     static letter_color = "#0d540f"
     static visible_in_inspector = false
     static density = 390
+    static is_burnable = true
+    static burn_rate = 0.1
     
     static simulateBlock(x,y,grid){
         if (!Simulation.isInGrid(x, y+1, grid)){
@@ -958,6 +967,8 @@ class Bamboo_Chopped extends Block{
     static visible_in_inspector = false
     static density = 250
     static can_be_swaped = true
+    static is_burnable = true
+    static burn_rate = 0.2
 
     static tryMove(o_x,o_y, n_x, n_y,grid){
         if (!Simulation.isInGrid(n_x, n_y, grid)){
@@ -1011,6 +1022,8 @@ class Bamboo_Flower extends Block{
     static letter_color = "#52f041"
     static visible_in_inspector = false
     static density = 390
+    static is_burnable = true
+    static burn_rate = 1.0
 
     static simulateBlock(x,y,grid){
         if(Math.random() < 0.0002){
@@ -1046,5 +1059,124 @@ class Bamboo_Flower extends Block{
             grid[y][x].reset()
             grid[y][x].blockId = BlocksHandler.getBlockId(Bamboo_Chopped)
         }
+    }
+}
+
+class Fire extends Block{
+    static letter_symbol = "█"
+    static letter_color = "#ff580a"
+    static visible_in_inspector = false
+    static density = 390
+    static visible_in_inspector = true
+
+    static simulateBlock(x, y, grid){
+    // try to burn all neighbours
+        let [new_x, new_y] = this.preSimulationHook(x,y,grid)
+
+        x=new_x
+        y=new_y
+
+        for (let n_x = x - 1; n_x <= x+1; n_x++){
+            for(let n_y = y - 1; n_y <= y+1; n_y++){
+                if (n_x == x && n_y == y){
+                    continue;
+                }
+                if (!Simulation.isInGrid(n_x, n_y, grid)){
+                    continue
+                }
+                // get block
+                // check if it is burnable
+                // try to burn based on burning rate
+                let next_block = BlocksHandler.getBlock(grid[n_y][n_x].blockId)
+                if(next_block.is_burnable != true){
+                    continue
+                }
+                // BURN! BURN! BURN!
+                if(Math.random() > next_block.burn_rate){
+                    continue
+                }
+                grid[n_y][n_x].reset()
+                grid[n_y][n_x].blockId = BlocksHandler.getBlockId(Fire)
+                grid[n_y][n_x].done = true
+            }
+        }
+
+        // Try to get extinguished?
+        this.postSimulationHook(x,y,grid)
+    }
+
+    static postSimulationHook(x,y,grid){
+        grid[y][x].blockId = BlocksHandler.getBlockId(Fire_2)
+    }
+
+    static tryMove(o_x,o_y, n_x, n_y,grid){
+        if (!Simulation.isInGrid(n_x, n_y, grid)){
+            return false;
+        }
+        // get element
+        const this_cell = grid[n_y][n_x];
+        const this_block = BlocksHandler.getBlock(this_cell.blockId);
+        const original_cell = grid[o_y][o_x];
+        const original_block = BlocksHandler.getBlock(original_cell.blockId);
+
+        if (!this_block.can_be_swaped){
+            return false;
+        }
+
+        //compare density
+        //compare density
+        if (!(this_block.density < original_block.density)){
+            return
+        }
+
+        // swap blocks
+        var temp = grid[n_y][n_x]
+        grid[n_y][n_x] = grid[o_y][o_x]
+        grid[o_y][o_x] = temp
+
+        return true;
+    }
+
+    static preSimulationHook(x, y, grid){
+        // try to fall down
+        if(this.tryMove(x,y, x, y+1, grid)){
+            grid[y][x].done = true;
+            return [x,y+1]
+        }
+        // try to move left
+        if(this.tryMove(x,y, x-1, y+1, grid)){
+            grid[y][x].done = true;
+            return [x-1,y+1]
+        }
+        // try to move right
+        if(this.tryMove(x,y, x+1, y+1, grid)){
+            grid[y][x].done = true;
+            return [x+1,y+1]
+        }
+        return [x,y]
+    }
+}
+
+class Fire_2 extends Fire{
+    static letter_symbol = "▓"
+    static visible_in_inspector=false
+    static postSimulationHook(x,y,grid){
+        grid[y][x].blockId = BlocksHandler.getBlockId(Fire_3)
+    }
+}
+
+class Fire_3 extends Fire{
+    static letter_symbol = "▒"
+    static visible_in_inspector=false
+    static postSimulationHook(x,y,grid){
+        grid[y][x].blockId = BlocksHandler.getBlockId(Fire_4)
+    }
+}
+
+class Fire_4 extends Fire{
+    static letter_symbol = "░"
+    static visible_in_inspector=false
+    static postSimulationHook(x,y,grid){
+        grid[y][x].blockId = BlocksHandler.getBlockId(Cloud)
     }
 }
