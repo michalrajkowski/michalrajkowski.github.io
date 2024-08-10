@@ -1,6 +1,7 @@
 import { Block, Air, Sand, Iron, Water, Vortex, LivingMatter, Spawner, Cloud, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped, Fire,
 Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC,
-Pipe_UR, Pipe_DR, Pipe_UL, Pipe_DL, Pipe_UD, Pipe_LR, Pipe_NR, Pipe_NL, Pipe_NU, Pipe_ND} from './blocks.js'
+Pipe_UR, Pipe_DR, Pipe_UL, Pipe_DL, Pipe_UD, Pipe_LR, Pipe_NR, Pipe_NL, Pipe_NU, Pipe_ND,
+Pipe_UR_THICC, Pipe_DR_THICC, Pipe_UL_THICC, Pipe_DL_THICC, Pipe_UD_THICC, Pipe_LR_THICC, Pipe_NR_THICC, Pipe_NL_THICC, Pipe_NU_THICC, Pipe_ND_THICC} from './blocks.js'
 
 export class BlocksHandler {
     static blockDict = {
@@ -38,8 +39,18 @@ export class BlocksHandler {
         31: Pipe_NR,
         32: Pipe_NL,
         33: Pipe_NU,
-        34: Pipe_ND
-    };
+        34: Pipe_ND,
+        35: Pipe_UR_THICC,
+        36: Pipe_DR_THICC,
+        37: Pipe_UL_THICC,
+        38: Pipe_DL_THICC,
+        39: Pipe_UD_THICC,
+        40: Pipe_LR_THICC,
+        41: Pipe_NR_THICC,
+        42: Pipe_NL_THICC,
+        43: Pipe_NU_THICC,
+        44: Pipe_ND_THICC
+    };    
     
 
     // Define a static method to retrieve string for a given number

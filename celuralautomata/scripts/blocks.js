@@ -1,7 +1,8 @@
 import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
 export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped, Fire,
-Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC, Pipe_UR, Pipe_DR, Pipe_UL, Pipe_DL, Pipe_UD, Pipe_LR, Pipe_NR, Pipe_NL, Pipe_NU, Pipe_ND}
+Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC, Pipe_UR, Pipe_DR, Pipe_UL, Pipe_DL, Pipe_UD, Pipe_LR, Pipe_NR, Pipe_NL, Pipe_NU, Pipe_ND,
+Pipe_UR_THICC, Pipe_DR_THICC, Pipe_UL_THICC, Pipe_DL_THICC, Pipe_UD_THICC, Pipe_LR_THICC, Pipe_NR_THICC, Pipe_NL_THICC, Pipe_NU_THICC, Pipe_ND_THICC}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -1275,6 +1276,7 @@ class Pipe_Input_Output extends Block{
         grid[n_y][n_x].force.y = block_id
         // thick the pipe
         grid[n_y][n_x].blockId = BlocksHandler.getBlockId(Pipe_THICC)
+        Pipe_THICC.pipe_idle_behaviour(n_x, n_y, grid)
         grid[b_y][b_x].reset()
         console.log("Sucked block")
     }
@@ -1375,6 +1377,51 @@ class Pipe extends Block{
                     grid[y][x].blockId = BlocksHandler.getBlockId(Pipe)
                     break
             }
+        }else{
+            let nei_pipes = [false,false,false,false]
+            nei_pipes[0] = this.find_valve_or_pipe(x,y-1,grid)
+            nei_pipes[1] = this.find_valve_or_pipe(x+1,y,grid)
+            nei_pipes[2] = this.find_valve_or_pipe(x,y+1,grid)
+            nei_pipes[3] = this.find_valve_or_pipe(x-1,y,grid)
+            // take from dict based on nei flags
+
+            switch (JSON.stringify(nei_pipes)) {
+                case JSON.stringify([false, true, true, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_NU_THICC);
+                    break;
+                case JSON.stringify([true, false, true, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_NR_THICC);
+                    break;
+                case JSON.stringify([true, true, false, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_ND_THICC);
+                    break;
+                case JSON.stringify([true, true, true, false]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_NL_THICC);
+                    break;
+                // All bents
+                case JSON.stringify([true, true, false, false]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_UR_THICC);
+                    break;
+                case JSON.stringify([true, false, true, false]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_UD_THICC);
+                    break;
+                case JSON.stringify([true, false, false, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_UL_THICC);
+                    break;
+                case JSON.stringify([false, true, true, false]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_DR_THICC);
+                    break;
+                case JSON.stringify([false, true, false, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_LR_THICC);
+                    break;
+                case JSON.stringify([false, false, true, true]):
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_DL_THICC);
+                    break;
+                // Special case if not fall into anything
+                default:
+                    grid[y][x].blockId = BlocksHandler.getBlockId(Pipe_THICC);
+                    break;
+            }            
         }
 
     }
@@ -1478,6 +1525,7 @@ class Pipe extends Block{
 
             // TODO: change pipe appearance to THICC
             grid[n_y][n_x].blockId = BlocksHandler.getBlockId(Pipe_THICC)
+            Pipe_THICC.pipe_idle_behaviour(n_x, n_y, grid)
 
             // (2) change it to busy
             grid[n_y][n_x].done = true
@@ -1485,6 +1533,7 @@ class Pipe extends Block{
             // (3) change itself to normal
             // TODO: UNTHIC MYSELF
             grid[y][x].blockId = BlocksHandler.getBlockId(Pipe)
+            Pipe.pipe_idle_behaviour(x, y, grid)
 
             // (4) create empty fake slot on itself (pointing to the new liquid slot)
             grid[y][x].force.x = n_x
@@ -1548,5 +1597,55 @@ class Pipe_NU extends Pipe{
 class Pipe_ND extends Pipe{
     static letter_symbol = "┴"
     static visible_in_inspector = false       
+}
+
+class Pipe_UR_THICC extends Pipe_THICC {
+    static letter_symbol = "╚"; // Thicker version of "└"
+    static visible_in_inspector = false;       
+}
+
+class Pipe_DR_THICC extends Pipe_THICC {
+    static letter_symbol = "╔"; // Thicker version of "┌"
+    static visible_in_inspector = false;       
+}
+
+class Pipe_UL_THICC extends Pipe_THICC {
+    static letter_symbol = "╝"; // Thicker version of "┘"
+    static visible_in_inspector = false;       
+}
+
+class Pipe_DL_THICC extends Pipe_THICC {
+    static letter_symbol = "╗"; // Thicker version of "┐"
+    static visible_in_inspector = false;       
+}
+
+class Pipe_UD_THICC extends Pipe_THICC {
+    static letter_symbol = "║"; // Thicker version of "│"
+    static visible_in_inspector = false;       
+}
+
+class Pipe_LR_THICC extends Pipe_THICC {
+    static letter_symbol = "═"; // Thicker version of "─"
+    static visible_in_inspector = false;       
+}
+
+class Pipe_NR_THICC extends Pipe_THICC {
+    static letter_symbol = "╣"; // Thicker version of "┤"
+    static visible_in_inspector = false;       
+}
+
+class Pipe_NL_THICC extends Pipe_THICC {
+    static letter_symbol = "╠"; // Thicker version of "├"
+    static visible_in_inspector = false;       
+}
+
+class Pipe_NU_THICC extends Pipe_THICC {
+    static letter_symbol = "╦"; // Thicker version of "┬"
+    static visible_in_inspector = false;       
+}
+
+class Pipe_ND_THICC extends Pipe_THICC {
+    static letter_symbol = "╩"; // Thicker version of "┴"
+    static visible_in_inspector = false;       
 }
 
