@@ -2,7 +2,7 @@ import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
 export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped, Fire,
 Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC, Pipe_UR, Pipe_DR, Pipe_UL, Pipe_DL, Pipe_UD, Pipe_LR, Pipe_NR, Pipe_NL, Pipe_NU, Pipe_ND,
-Pipe_UR_THICC, Pipe_DR_THICC, Pipe_UL_THICC, Pipe_DL_THICC, Pipe_UD_THICC, Pipe_LR_THICC, Pipe_NR_THICC, Pipe_NL_THICC, Pipe_NU_THICC, Pipe_ND_THICC}
+Pipe_UR_THICC, Pipe_DR_THICC, Pipe_UL_THICC, Pipe_DL_THICC, Pipe_UD_THICC, Pipe_LR_THICC, Pipe_NR_THICC, Pipe_NL_THICC, Pipe_NU_THICC, Pipe_ND_THICC, Totem, IdeaMark, IdeaMark_Thinking}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -16,6 +16,8 @@ class Block{
     static burn_rate = 1.0
     static is_pipe = false
     static is_thicc_pipe = false
+    static is_idea = false
+    static is_human = false
 
     static getLetterSymbol(){
         return this.letter_symbol
@@ -1201,6 +1203,152 @@ class Human extends Block{
     static block_name = "Human"
     static block_desc = "Complex inteligent life form. Has ideas and follows them"
     static visible_in_inspector = true;
+    static is_human = true
+    static density = 310
+
+    static handle_physics(x,y,grid){
+        // falls down if there is not a filled space below.
+        // after fall damage?
+        // take mark with you?
+
+        if (!(Simulation.isInGrid(x, y+1, grid))){
+            return
+        }
+
+        let block_below = BlocksHandler.getBlock(grid[y+1][x].blockId)
+        if (block_below.density >= this.density){
+            return
+        }
+
+        // we are falling!!
+        // TODO: fall down and move your questionmark!
+    }
+
+    static try_to_follow_idea(x,y,grid){
+        if (!(Simulation.isInGrid(x, y-1, grid))){
+            return false
+        }
+        let block_above = BlocksHandler.getBlock(grid[y-1][x].blockId)
+        if (!block_above.is_idea){
+            return false
+        }
+
+        return true
+    }
+
+    static follow_idea(x,y,grid){
+        
+    }
+
+    static try_create_idea(x,y,grid, idea_mark_id){
+        if (!(Simulation.isInGrid(x, y-1, grid))){
+            return false
+        }
+        if (grid[y-1][x].blockId != BlocksHandler.getBlockId(Air)){
+            return false
+        }
+
+        grid[y-1][x].blockId = idea_mark_id
+        return true
+    }
+
+    static try_chaotic_walk(x,y,grid){
+        // rng move left or right?
+        let move_unit_modifier = Math.random() < 0.5 ? -1 : 1;
+        if ((Simulation.isInGrid(x + move_unit_modifier, y, grid) == true)){
+            if (grid[y][x+ move_unit_modifier].blockId == BlocksHandler.getBlockId(Air)){
+                var temp = grid[y][x+ move_unit_modifier]
+                grid[y][x + move_unit_modifier] = grid[y][x]
+                grid[y][x] = temp
+                grid[y][x].done = true
+                grid[y][x+move_unit_modifier].done = true
+                return
+            }
+        }
+        
+        move_unit_modifier = move_unit_modifier*(-1)
+        if ((Simulation.isInGrid(x + move_unit_modifier, y, grid) == true)){
+            if (grid[y][x+ move_unit_modifier].blockId == BlocksHandler.getBlockId(Air)){
+                var temp = grid[y][x+ move_unit_modifier]
+                grid[y][x + move_unit_modifier] = grid[y][x]
+                grid[y][x] = temp
+                grid[y][x].done = true
+                grid[y][x+move_unit_modifier].done = true
+                return
+            }
+        }
+    }
+
+    static simulateBlock(x, y, grid){
+        // handle physics
+        this.handle_physics(x,y,grid)
+
+        // try to think?
+        let can_follow_idea = this.try_to_follow_idea(x,y,grid)
+
+        if (can_follow_idea){
+            this.follow_idea(x,y,grid)
+            return
+        }
+
+        // We dont have idea!
+
+        // Try to create thinking idea
+        let created_default_idea = this.try_create_idea(x,y,grid, BlocksHandler.getBlockId(IdeaMark_Thinking))
+        if (created_default_idea){
+            return
+        }
+
+        // Try wantering chaoticly (we are so lost?)
+        this.try_chaotic_walk(x,y,grid)
+
+        // We cant even move?!
+    }
+}
+
+class Human_2 extends Human{
+    static letter_symbol = "∏"
+    static block_name = "Human v2"
+    static block_desc = "Different tribe of human that is in conflict with the full-color one"
+}
+
+class IdeaMark extends Block{
+    static letter_symbol = "!"
+    static letter_color = "#ffffff"
+    static is_idea = true
+    static visible_in_inspector = false
+    
+    // Vanish if not human below (or totem?)
+    static vanish_this(x,y,grid){
+        grid[y][x].reset()
+        return
+    }
+    
+    static simulateBlock(x, y, grid){
+        // vanish if block below is not human
+        let cell_below = grid[y+1][x]
+        if (!(Simulation.isInGrid(x, y+1, grid))){
+            this.vanish_this(x,y,grid)
+            return
+        }
+        let block_below = BlocksHandler.getBlock(cell_below.blockId)
+        if (!block_below.is_human){
+            this.vanish_this(x,y,grid)
+            return
+        }
+
+    }
+}
+class IdeaMark_Thinking extends IdeaMark{
+    static letter_symbol = "?"
+}
+
+class Totem extends Block{
+    static letter_symbol = "∏"
+    static letter_color = "#ffffff"
+    static block_name = "Totem"
+    static block_desc = ""
+    static visible_in_inspector = false;
 
     handle_physics(){
         // falls down if there is not a filled space below.
@@ -1218,16 +1366,6 @@ class Human extends Block{
         // choose strategies
 
     }
-}
-
-class Human_2 extends Human{
-    static letter_symbol = "☺"
-    static block_name = "Human v2"
-    static block_desc = "Different tribe of human that is in conflict with the full-color one"
-}
-
-class IdeaMark extends Block{
-
 }
 
 class Pipe_Input_Output extends Block{
