@@ -2,7 +2,7 @@ import { Block, Air, Sand, Iron, Water, Vortex, LivingMatter, Spawner, Cloud, Fi
 Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC,
 Pipe_UR, Pipe_DR, Pipe_UL, Pipe_DL, Pipe_UD, Pipe_LR, Pipe_NR, Pipe_NL, Pipe_NU, Pipe_ND,
 Pipe_UR_THICC, Pipe_DR_THICC, Pipe_UL_THICC, Pipe_DL_THICC, Pipe_UD_THICC, Pipe_LR_THICC, Pipe_NR_THICC, Pipe_NL_THICC, Pipe_NU_THICC, Pipe_ND_THICC,
-Totem, IdeaMark, IdeaMark_Thinking, IdeaMark_WanderInDirection} from './blocks.js'
+Totem, IdeaMark, IdeaMark_Thinking, IdeaMark_WanderInDirection, IdeaMark_JoinTribe} from './blocks.js'
 
 export class BlocksHandler {
     static blockDict = {
@@ -55,6 +55,7 @@ export class BlocksHandler {
         46: IdeaMark,
         47: IdeaMark_Thinking,
         48: IdeaMark_WanderInDirection,
+        49: IdeaMark_JoinTribe,
     };    
     
 

@@ -3,7 +3,7 @@ import { BlocksHandler } from "./blocks_handler.js"
 export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped, Fire,
 Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC, Pipe_UR, Pipe_DR, Pipe_UL, Pipe_DL, Pipe_UD, Pipe_LR, Pipe_NR, Pipe_NL, Pipe_NU, Pipe_ND,
 Pipe_UR_THICC, Pipe_DR_THICC, Pipe_UL_THICC, Pipe_DL_THICC, Pipe_UD_THICC, Pipe_LR_THICC, Pipe_NR_THICC, Pipe_NL_THICC, Pipe_NU_THICC, Pipe_ND_THICC, Totem, IdeaMark, IdeaMark_Thinking,
-IdeaMark_WanderInDirection}
+IdeaMark_WanderInDirection, IdeaMark_JoinTribe}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -1258,7 +1258,16 @@ class Human extends Block{
         idea_block.action(x,y-1, grid)
     }
 
+    static exchange_idea(x,y,grid, idea_mark_id){
+
+        if (BlocksHandler.getBlock(grid[y-1][x].blockId).is_idea || grid[y-1][x].blockId == BlocksHandler.getBlockId(Air)){
+            grid[y-1][x].blockId = BlocksHandler.getBlockId(Air)
+            this.try_create_idea(x,y,grid,idea_mark_id)
+        }
+    }
+
     static try_create_idea(x,y,grid, idea_mark_id){
+        console.log("try to create idea")
         if (!(Simulation.isInGrid(x, y-1, grid))){
             return false
         }
@@ -1298,12 +1307,83 @@ class Human extends Block{
             }
         }
     }
+    static try_create_tribe(x,y,grid){
+        // Spawn totem
+        for (let i = 0; i< 10; i++){
+            console.log("spawning totem")
+            let totem_x = Math.round(Math.random() * 30)
+            let totem_y = Math.round(Math.random() * 30)
+            if (grid[totem_y][totem_x].blockId != BlocksHandler.getBlockId(Air)){
+                continue
+            }
+            // possible to spawn
+            grid[totem_y][totem_x].blockId = BlocksHandler.getBlockId(Totem)
+            grid[y][x].force.x = totem_x
+            grid[y][x].force.y = totem_y
+            return true
+        }
+        return false
+    }
+    
+    static human_interaction(x,y,grid, n_x, n_y){
+        // Check if tribeless
+        if (grid[y][x].force.x == 0 && grid[y][x].force.y == 0){
+            // if other is tribeless, create tribe
+            if (grid[n_y][n_x].force.x == 0 && grid[n_y][n_x].force.y == 0){
+                let created_totem = this.try_create_tribe(x,y,grid)
+                if (!created_totem){
+                    return false
+                }
+                this.exchange_idea(x,y,grid,BlocksHandler.getBlockId(IdeaMark_JoinTribe))    
+                return true
+            }
+            // if other is in tribe, join it
+            grid[y][x].force.x = grid[n_y][n_x].force.x
+            grid[y][x].force.y = grid[n_y][n_x].force.y
+            // TODO - join tribe status idle?
+            this.exchange_idea(x,y,grid,BlocksHandler.getBlockId(IdeaMark_JoinTribe))
+            return true
+
+        }
+        // we are not tribeless
+
+        return false
+    }
+    static check_neighbours(x,y,grid){
+        // look for human neighbour
+        console.log("checking neighbours")
+        for (let n_x = x-1; n_x <= x+1; n_x++){
+            for (let n_y = y-1; n_y <= y+1; n_y++){
+                console.log("loop step")
+                if(x == n_x && y == n_y){
+                    continue
+                }
+                // check if valid block
+                // check if it is human
+                // process human
+                if (!(Simulation.isInGrid(n_x,n_y,grid))){
+                    continue
+                }
+                let new_block = BlocksHandler.getBlock(grid[n_y][n_x].blockId)
+                if (!new_block.is_human){
+                    continue
+                }
+                let interaction_busy = this.human_interaction(x,y,grid,n_x,n_y)
+                if (interaction_busy){
+                    return
+                }
+            }
+        }
+    }
 
     static simulateBlock(x, y, grid){
         // handle physics
         let [new_x, new_y] = this.handle_physics(x,y,grid)
         x = new_x
         y = new_y
+        
+        // check neighbours?!
+        this.check_neighbours(x,y,grid)
 
         // try to think?
         let can_follow_idea = this.try_to_follow_idea(x,y,grid)
@@ -1332,6 +1412,7 @@ class Human_2 extends Human{
     static letter_symbol = "∏"
     static block_name = "Human v2"
     static block_desc = "Different tribe of human that is in conflict with the full-color one"
+    static visible_in_inspector = false
 }
 
 class IdeaMark extends Block{
@@ -1425,6 +1506,11 @@ class IdeaMark_Thinking extends IdeaMark{
             return
         } 
     }
+}
+
+class IdeaMark_JoinTribe extends Cooldown_IdeaMark{
+    static letter_symbol = "↑"
+    static idea_timer_max = 10
 }
 
 class IdeaMark_WanderInDirection extends Cooldown_IdeaMark{
