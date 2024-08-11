@@ -1222,6 +1222,19 @@ class Human extends Block{
 
         // we are falling!!
         // TODO: fall down and move your questionmark!
+        
+        // swap human and cell below
+        [grid[y][x], grid[y+1][x]] = [grid[y+1][x], grid[y][x]];
+        // also swap idea if exists?
+        if (!(Simulation.isInGrid(x, y-1, grid))){
+            return
+        }
+        let block_above = BlocksHandler.getBlock(grid[y-1][x].blockId)
+        if (!block_above.is_idea){
+            return false
+        }
+        [grid[y][x], grid[y-1][x]] = [grid[y-1][x], grid[y][x]];
+
     }
 
     static try_to_follow_idea(x,y,grid){
@@ -1317,7 +1330,7 @@ class IdeaMark extends Block{
     static letter_color = "#ffffff"
     static is_idea = true
     static visible_in_inspector = false
-    
+
     // Vanish if not human below (or totem?)
     static vanish_this(x,y,grid){
         grid[y][x].reset()
