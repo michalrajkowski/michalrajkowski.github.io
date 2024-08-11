@@ -1235,6 +1235,8 @@ class Human extends Block{
             return [x,y+1]
         }
         [grid[y][x], grid[y-1][x]] = [grid[y-1][x], grid[y][x]];
+        grid[y][x].done = true
+        grid[y-1][x].done = true
         
         return [x,y+1]
     }
@@ -1435,10 +1437,76 @@ class IdeaMark_WanderInDirection extends Cooldown_IdeaMark{
         grid[y][x].force.y = move_unit_modifier
     }
 
+
+    static move_human(x,y,grid,n_x,n_y){
+        //console.log(`human move: ${x},${y}, ${n_x}, ${n_y}`)
+        // swap both person and idea
+        // swap humus
+        [grid[y-1][x], grid[n_y-1][n_x]] = [grid[n_y-1][n_x], grid[y-1][x]];
+        [grid[y][x], grid[n_y][n_x]] = [grid[n_y][n_x], grid[y][x]];
+        grid[y-1][x].done = true
+        grid[n_y-1][n_x].done = true
+        grid[y][x].done = true 
+        grid[n_y][n_x].done = true
+    }
+
+    static try_human_move(x,y,grid, n_x, n_y){
+        //console.log(`try move: ${x},${y}, ${n_x}, ${n_y}`)
+        //console.log("Is in grid")
+        if (!(Simulation.isInGrid(n_x,n_y,grid) && Simulation.isInGrid(n_x,n_y-1, grid))){
+            return false
+        }
+        let block_hum_new = BlocksHandler.getBlock(grid[n_y][n_x].blockId)
+        let block_id_new = BlocksHandler.getBlock(grid[n_y-1][n_x].blockId)
+        //console.log("can be swaped")
+        if (block_hum_new.can_be_swaped == false || block_id_new.can_be_swaped == false){
+            return false
+        }
+        //console.log("Density lower")
+        let human_density = BlocksHandler.getBlock(BlocksHandler.getBlockId(Human)).density
+        if (block_hum_new.density >= human_density || block_id_new.density >= human_density){
+            return false
+        }
+        // check for feet support
+        //console.log("Can be supported on")
+        if (!(Simulation.isInGrid(n_x,n_y+1,grid))){
+            this.move_human(x,y,grid,n_x,n_y)
+            return true
+        }
+        let support_block = BlocksHandler.getBlock(grid[n_y+1][n_x].blockId)
+        if (support_block.density < human_density){
+            return false
+        }
+        this.move_human(x,y,grid,n_x,n_y)
+        return true
+        
+    }
+
     static action(x,y,grid){
         // Walk in direction from move_unit_modifier (hidden in force.y)
         let move_unit_modifier = grid[y][x].force.y
+        // Human have to be below this right? (if it was called from human...)
+
+        // try to just move left, if it is not possible left+up, if not possible left + down
+        console.log("Try move x,y")
+        if(this.try_human_move(x,y+1,grid,x+move_unit_modifier,y+1)){
+            return
+        }
+        console.log("Try move x,y-1")
+        if(this.try_human_move(x,y+1,grid,x+move_unit_modifier,y)){
+            return
+        }
+        console.log("Try move x,y+1")
+        if(this.try_human_move(x,y+1,grid,x+move_unit_modifier,y+2)){
+            return
+        }
+        // We can't move more?
     }
+
+}
+
+// Like normal moving but can fall out of cliff? xd
+class IdeaMark_LemingMove extends Cooldown_IdeaMark{
 
 }
 
