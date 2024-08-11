@@ -2,7 +2,8 @@ import { Simulation } from "./simulation.js"
 import { BlocksHandler } from "./blocks_handler.js"
 export { Block, Air, Sand, Iron, Water, Cloud, Vortex, LivingMatter, Spawner, Fish, Meat, Seed, GrowthCone_Bamboo, Bamboo_Up, Bamboo_Flower, KineticBall, Bamboo_Chopped, Fire,
 Fire_2,Fire_3,Fire_4, Human, Human_2, Pipe_Input_Output, Pipe, Pipe_THICC, Pipe_UR, Pipe_DR, Pipe_UL, Pipe_DL, Pipe_UD, Pipe_LR, Pipe_NR, Pipe_NL, Pipe_NU, Pipe_ND,
-Pipe_UR_THICC, Pipe_DR_THICC, Pipe_UL_THICC, Pipe_DL_THICC, Pipe_UD_THICC, Pipe_LR_THICC, Pipe_NR_THICC, Pipe_NL_THICC, Pipe_NU_THICC, Pipe_ND_THICC, Totem, IdeaMark, IdeaMark_Thinking}
+Pipe_UR_THICC, Pipe_DR_THICC, Pipe_UL_THICC, Pipe_DL_THICC, Pipe_UD_THICC, Pipe_LR_THICC, Pipe_NR_THICC, Pipe_NL_THICC, Pipe_NU_THICC, Pipe_ND_THICC, Totem, IdeaMark, IdeaMark_Thinking,
+IdeaMark_WanderInDirection}
 class Block{
     static letter_symbol = "X"
     static letter_color = "#ffffff"
@@ -1250,7 +1251,8 @@ class Human extends Block{
     }
 
     static follow_idea(x,y,grid){
-        
+        let idea_block = BlocksHandler.getBlock(grid[y-1][x].blockId)
+        idea_block.action(x,y-1, grid)
     }
 
     static try_create_idea(x,y,grid, idea_mark_id){
@@ -1262,6 +1264,8 @@ class Human extends Block{
         }
 
         grid[y-1][x].blockId = idea_mark_id
+        let idea_block = BlocksHandler.getBlock(idea_mark_id)
+        idea_block.setup(x,y-1, grid)
         return true
     }
 
@@ -1331,10 +1335,41 @@ class IdeaMark extends Block{
     static is_idea = true
     static visible_in_inspector = false
 
+    static try_create_idea(x,y,grid, idea_mark_id){
+        if (!(Simulation.isInGrid(x, y, grid))){
+            return false
+        }
+        if (grid[y][x].blockId != BlocksHandler.getBlockId(Air)){
+            return false
+        }
+
+        grid[y][x].blockId = idea_mark_id
+        let idea_block = BlocksHandler.getBlock(idea_mark_id)
+        idea_block.setup(x,y, grid)
+        return true
+    }
+
+    static exchange_idea(x,y,grid, idea_mark_id){
+        grid[y][x].blockId = BlocksHandler.getBlockId(Air)
+        this.try_create_idea(x,y,grid,idea_mark_id)
+    }
+
     // Vanish if not human below (or totem?)
+    static setup(x,y,grid){
+
+    }
+
+    static action(x,y,grid){
+
+    }
+
     static vanish_this(x,y,grid){
         grid[y][x].reset()
         return
+    }
+
+    static postSimulationHook(x,y,grid){
+
     }
     
     static simulateBlock(x, y, grid){
@@ -1350,10 +1385,47 @@ class IdeaMark extends Block{
             return
         }
 
+        this.postSimulationHook(x,y,grid)
+
     }
 }
+class Cooldown_IdeaMark extends IdeaMark{
+
+    static idea_timer_max = 2
+
+    static postSimulationHook(x,y,grid){
+        // if timer = 0 -> set timer
+        // decrement by one
+        // if timer = 1 - delete
+        if (grid[y][x].force.x == 0){
+            grid[y][x].force.x = this.idea_timer_max
+        }
+        grid[y][x].force.x-=1
+        if (grid[y][x].force.x == 1){
+            this.vanish_this(x,y,grid)
+        }
+    }
+}
+
 class IdeaMark_Thinking extends IdeaMark{
     static letter_symbol = "?"
+
+    static action(x,y,grid){
+        // RNG to change this idea to different one?
+        let rand_num = Math.random()
+
+        // TODO: mechanizm z wagami z MC?
+        if (rand_num < 0.05){
+            this.exchange_idea(x,y,grid, BlocksHandler.getBlockId(IdeaMark_WanderInDirection))
+            return
+        } 
+    }
+}
+
+class IdeaMark_WanderInDirection extends Cooldown_IdeaMark{
+    static letter_symbol = "⇄"
+    static idea_timer_max = 10
+
 }
 
 class Totem extends Block{
