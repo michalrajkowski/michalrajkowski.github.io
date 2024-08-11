@@ -1213,12 +1213,12 @@ class Human extends Block{
         // take mark with you?
 
         if (!(Simulation.isInGrid(x, y+1, grid))){
-            return
+            return [x,y]
         }
 
         let block_below = BlocksHandler.getBlock(grid[y+1][x].blockId)
         if (block_below.density >= this.density){
-            return
+            return [x,y]
         }
 
         // we are falling!!
@@ -1228,14 +1228,15 @@ class Human extends Block{
         [grid[y][x], grid[y+1][x]] = [grid[y+1][x], grid[y][x]];
         // also swap idea if exists?
         if (!(Simulation.isInGrid(x, y-1, grid))){
-            return
+            return [x,y+1]
         }
         let block_above = BlocksHandler.getBlock(grid[y-1][x].blockId)
         if (!block_above.is_idea){
-            return false
+            return [x,y+1]
         }
         [grid[y][x], grid[y-1][x]] = [grid[y-1][x], grid[y][x]];
-
+        
+        return [x,y+1]
     }
 
     static try_to_follow_idea(x,y,grid){
@@ -1298,7 +1299,9 @@ class Human extends Block{
 
     static simulateBlock(x, y, grid){
         // handle physics
-        this.handle_physics(x,y,grid)
+        let [new_x, new_y] = this.handle_physics(x,y,grid)
+        x = new_x
+        y = new_y
 
         // try to think?
         let can_follow_idea = this.try_to_follow_idea(x,y,grid)
@@ -1425,6 +1428,17 @@ class IdeaMark_Thinking extends IdeaMark{
 class IdeaMark_WanderInDirection extends Cooldown_IdeaMark{
     static letter_symbol = "⇄"
     static idea_timer_max = 10
+
+    static setup(x,y,grid){
+        // Choose wandering direction
+        let move_unit_modifier = Math.random() < 0.5 ? -1 : 1;
+        grid[y][x].force.y = move_unit_modifier
+    }
+
+    static action(x,y,grid){
+        // Walk in direction from move_unit_modifier (hidden in force.y)
+        let move_unit_modifier = grid[y][x].force.y
+    }
 
 }
 
