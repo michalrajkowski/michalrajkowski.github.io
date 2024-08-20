@@ -353,7 +353,7 @@ class Spawner extends Block{
     static can_be_swaped = false
     static block_name = "Spawner"
     static block_desc = "Copies block above it and spawns it below. If spawner above, spawns at increased rates. "
-    static density = 0
+    static density = 9999
     static letter_color = "#707070";
 
     static simulateBlock(x, y, grid){
