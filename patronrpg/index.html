@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+    <title>Patron RPG Website</title>
+    <py-env>
+        - paths:
+          - /patronrpg/scripts/simple_character_generator.py
+    </py-env>
+    <style>
+        /* Hide the PyScript console */
+        pyscript-console {
+            display: none;
+        }
+
+        /* Style for the button */
+        .my-button {
+            background-color: #4CAF50; /* Green background */
+            border: none; /* No borders */
+            color: white; /* White text */
+            padding: 15px 32px; /* Some padding */
+            text-align: center; /* Centered text */
+            text-decoration: none; /* No underline */
+            display: inline-block; /* Inline-block */
+            font-size: 16px; /* Large text */
+            margin: 4px 2px; /* Margins */
+            cursor: pointer; /* Pointer on hover */
+            border-radius: 8px; /* Rounded corners */
+            transition: background-color 0.3s; /* Smooth background transition */
+        }
+
+        .my-button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        /* Style for the character creation div */
+        .character-creation {
+            border: 2px solid #4CAF50; /* Green border */
+            border-radius: 10px; /* Rounded corners */
+            padding: 20px; /* Padding inside the div */
+            min-height: 150px; /* Minimum height */
+            margin: 20px; /* Margin around the div */
+            background-color: #f9f9f9; /* Light background */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            text-align: center; /* Centered text */
+        }
+
+        .character-creation h2 {
+            font-size: 24px; /* Heading size */
+            color: #333; /* Dark text */
+            margin-bottom: 10px; /* Space below heading */
+        }
+
+        .character-creation p {
+            font-size: 16px; /* Text size */
+            color: #666; /* Gray text */
+        }
+
+        #generatedCharacter {
+            border: 1px solid #ccc; /* Light gray border */
+            border-radius: 10px; /* Rounded corners */
+            padding: 15px; /* Padding */
+            margin: 20px; /* Margin around the output */
+            background-color: #ffffff; /* White background */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            font-family: Arial, sans-serif; /* Font family */
+            line-height: 1.5; /* Line height for readability */
+        }
+
+        /* Adjust heading styles */
+        #generatedCharacter h1 {
+            color: #4CAF50; /* Green text for the name */
+            font-size: 36px; /* Larger font size for the name */
+            margin: 0; /* Remove default margin */
+        }
+
+        #generatedCharacter h3 {
+            color: #333; /* Darker color for subclass */
+            font-size: 24px; /* Larger font size for subclass */
+            margin: 5px 0; /* Space around the subclass */
+        }
+
+        #generatedCharacter h2 {
+            color: #333; /* Dark text for section titles */
+            font-size: 20px; /* Larger font size for section titles */
+            margin: 10px 0; /* Space around section titles */
+        }
+</style>
+</head>
+<body>
+    <div class="character-creation">
+        <h2>Create Your Random Character</h2>
+        <p>Click the button below to generate a new character!</p>
+    <button class="my-button" id="loadButton">Rndom Character</button>
+    </div>
+    <p id="generatedCharacter">Initial text in the div
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>.</p>
+    <py-script>
+        from js import fetch, console
+        from pyodide import create_proxy
+        from simple_character_generator import load_all_data, build_random_character
+    
+        # Global variables to store character data
+        global_data = {
+            'subclasses_list': [],
+            'subclasses_names': {},
+            'subclass_skills': {},
+            'all_skills': [],
+            'goals_neutral_small': [],
+            'goals_neutral_big': [],
+            'class_goals_small': {},
+            'class_goals_big': {}
+        }
+    
+        def runPython(event):
+            new_text_data = build_random_character(global_data)
+            pre = document.getElementById('generatedCharacter')
+            pre.innerHTML = new_text_data
+    
+        async def main():
+            print("STARTING")
+            await fetch_load_all_data()
+            function_proxy = create_proxy(runPython)
+            document.getElementById("loadButton").addEventListener("click", function_proxy)
+            print(global_data)
+            print("FINISHED")
+    
+        async def load_file(file_path):
+            response = await fetch(file_path)
+            if response.ok:
+                return await response.text()
+            else:
+                console.error(f'Failed to fetch {file_path}:', response.status)
+                return None
+    
+        async def fetch_load_all_data():
+            file_paths = [
+                '/data/text data/subclassess.txt',
+                '/data/text data/names.txt',
+                '/data/text data/skills_subclass.txt',
+                '/data/text data/skills_all.txt',
+                '/data/text data/goals_neutral_small.txt',
+                '/data/text data/goals_neutral_big.txt',
+                '/data/text data/goals_class_small.txt',
+                '/data/text data/goals_class_big.txt'
+            ]
+    
+            all_data = []
+            for file_path in file_paths:
+                data = await load_file(file_path)
+                all_data.append(data if data is not None else '')
+    
+            # Unpack the loaded data
+            (
+                subclassess_data,
+                names_data,
+                subclass_skills_data,
+                all_skills_data,
+                goals_neutral_small_data,
+                goals_neutral_big_data,
+                class_goals_small_data,
+                class_goals_big_data
+            ) = all_data
+    
+            # Call load_all_data and update global_data
+            global_data.update(await load_all_data((
+                subclassess_data,
+                names_data,
+                subclass_skills_data,
+                all_skills_data,
+                goals_neutral_small_data,
+                goals_neutral_big_data,
+                class_goals_small_data,
+                class_goals_big_data
+            )))
+    
+        main()  # Call main to kick off the async process
+    </py-script>
+    
+    </body>
+</html>

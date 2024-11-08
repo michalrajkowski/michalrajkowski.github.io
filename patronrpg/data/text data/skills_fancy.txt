@@ -1,0 +1,97 @@
+Combat Skills
+
+    Melee Combat - Proficiency with swords, axes, etc.
+    Ranged Combat - Expertise in bows, crossbows, and thrown weapons.
+    Defense - Ability to block and dodge attacks.
+    Unarmed Combat - Skills in hand-to-hand fighting.
+
+Crafting and Trade Skills
+
+    Blacksmithing - Crafting weapons and armor.
+    Alchemy - Creating potions and elixirs.
+    Carpentry - Building structures or ships.
+    Jewelry Making - Crafting decorative items and jewelry.
+    Trading - Negotiation and bartering skills.
+
+Exploration and Survival Skills
+
+    Navigation - Finding your way on land or sea.
+    Hunting - Tracking and trapping animals.
+    Foraging - Identifying and gathering edible plants.
+    Survival - Skills for enduring harsh conditions.
+
+Social Skills
+
+    Persuasion - Convincing others to see your point of view.
+    Deception - Lying or misdirecting others.
+    Intimidation - Forcing compliance through fear.
+    Performance - Entertaining through music, dance, or storytelling.
+
+Knowledge and Lore Skills
+
+    History - Knowledge of past events and cultures.
+    Arcana - Understanding magical lore and artifacts.
+    Religion - Knowledge of deities and spiritual practices.
+    Geography - Familiarity with landscapes and locations.
+
+Specialized Skills
+
+    Sailing - Maneuvering and operating ships.
+    Thievery - Picking locks, stealth, and sleight of hand.
+    Beast Handling - Training and managing animals.
+    Herbalism - Identifying and using plants for healing or other purposes.
+
+Miscellaneous Skills
+
+    Cooking - Preparing meals with various effects.
+    Dancing - Social and cultural performance skills.
+    Cartography - Creating and interpreting maps.
+    Mining - Extracting resources from the earth.
+
+Magic and Mystical Skills
+
+    Elemental Manipulation - Controlling fire, water, earth, or air.
+    Enchanting - Imbuing items with magical properties.
+    Divination - Seeking knowledge through visions or omens.
+    Illusion - Creating false images or sounds.
+
+Stealth and Espionage Skills
+
+    Sneaking - Moving silently and avoiding detection.
+    Eavesdropping - Listening in on conversations without being noticed.
+    Disguise - Altering appearance to blend in or deceive.
+
+Technology and Engineering Skills
+
+    Mechanics - Understanding and repairing mechanical devices.
+    Engineering - Designing and constructing complex structures.
+    Traps - Setting and disarming traps for protection or ambush.
+
+Leadership and Influence Skills
+
+    Leadership - Inspiring and guiding others in groups or teams.
+    Tactics - Planning and executing strategies in combat or negotiations.
+    Charisma - Natural ability to attract and influence others.
+
+Psychological and Emotional Skills
+
+    Empathy - Understanding and relating to the emotions of others.
+    Intuition - Sensing underlying motives or emotions.
+    Mental Resilience - Withstanding mental and emotional stress.
+
+Environmental Skills
+
+    Animal Lore - Knowledge of different creatures and their behaviors.
+    Weather Prediction - Understanding and anticipating weather patterns.
+    Landscaping - Altering terrain for various purposes, like agriculture or defense.
+
+Ritual and Ceremony Skills
+
+    Ritual Casting - Performing complex rituals for specific outcomes.
+    Ceremonial Arts - Creating art for cultural or religious significance.
+
+Miscellaneous Lifestyle Skills
+
+    Gambling - Proficiency in games of chance and skill.
+    Gardening - Cultivating plants for food or beauty.
+    Storytelling - Weaving tales to entertain or convey messages.

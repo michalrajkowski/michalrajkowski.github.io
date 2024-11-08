@@ -1,0 +1,184 @@
+-alchemist
+Collect Rare Ingredients
+Gather unique herbs and minerals from different biomes.
+
+Create a Signature Potion
+Develop a personal formula for a new elixir.
+
+Repair a Broken Artifact
+Fix a damaged magical item using alchemical skills.
+
+Craft Basic Gear
+Produce simple alchemical tools or items for local adventurers.
+-artisan
+Create a Unique Item
+Craft a one-of-a-kind piece that showcases your skills and creativity.
+
+Attend a Craft Fair
+Participate in a local event to showcase your work and network with other artisans.
+
+Master a New Technique
+Learn and practice a new crafting method or style from a mentor.
+
+Gather Quality Materials
+Source rare or high-quality materials to enhance your creations.
+-jester
+Learn a New Trick
+Master a clever illusion or humorous performance skill.
+
+Perform for a Local Audience
+Entertain townsfolk with a spontaneous show in the market.
+
+Collect Funny Tales
+Gather amusing stories and jokes from various cultures.
+
+Win a Bet with Wit
+Outsmart a rival in a battle of wits or riddles.
+-occultist
+Conduct a Simple Ritual
+Perform a basic summoning or divination to gain insights.
+
+Collect Forbidden Tomes
+Acquire rare and mysterious books on the occult and arcane arts.
+
+Join a Secret Society
+Gain entry into an exclusive group dedicated to studying the hidden truths of the universe.
+
+Create a Protective Charm
+Craft an amulet or talisman to safeguard yourself against dark forces.
+-knight
+Train in Combat Techniques
+Hone your skills with a specific weapon or fighting style.
+
+Rescue a Local from Danger
+Save a villager or traveler from a minor threat, earning their gratitude.
+
+Establish a Squire Relationship
+Take on a young squire to mentor in the ways of knighthood.
+
+Participate in a Tournament
+Compete in a local jousting event to showcase your prowess and gain recognition.
+-thief
+Pickpocket a Noble
+Successfully lift a small item from a wealthy target without being caught.
+
+Infiltrate a Guarded Area
+Stealthily enter a restricted location to gather information or steal an item.
+
+Create a Mastery of Disguises
+Learn and practice various disguises to aid in infiltration and escape.
+
+Find a Hidden Cache
+Discover a stash of valuable items or information in an old hideout.
+-bard
+Learn a New Song
+Master a catchy tune or ballad that captivates audiences.
+
+Perform at a Local Tavern
+Delight patrons with an impromptu performance, gaining their favor.
+
+Gather Stories from Travelers
+Collect tales and legends from adventurers to enrich your repertoire.
+
+Create a Unique Instrument
+Craft or modify an instrument that enhances your musical abilities.
+-mage
+Master a Basic Spell
+Perfect your casting of a foundational spell, such as a simple fireball or light spell.
+
+Study a New School of Magic
+Explore and experiment with an unfamiliar branch of magic, like illusion or necromancy.
+
+Gather Magical Components
+Collect rare ingredients needed for potion brewing or spellcasting.
+
+Attend a Magic Symposium
+Participate in a gathering of fellow mages to share knowledge and learn new techniques.
+-cleric
+Heal a Wounded Local
+Provide aid to a villager or traveler in need, demonstrating your healing abilities.
+
+Perform a Small Blessing
+Conduct a simple ceremony to bless a community event or individual.
+
+Gather Holy Relics
+Collect items of significance to your faith, enhancing your connection to your deity.
+
+Study Ancient Texts
+Research the teachings and scriptures of your religion to deepen your understanding.
+-shaman
+Communicate with Spirits
+Establish a connection with a local spirit for guidance.
+
+Gather Sacred Herbs
+Collect plants used in rituals and healing practices.
+
+Perform a Minor Ritual
+Conduct a simple ceremony to bless a community or individual.
+
+Craft a Totem
+Create a personal totem that embodies your spirit animal or guide.
+-merchant
+Negotiate a Trade Deal
+Successfully strike a bargain with a local vendor to improve your stock.
+
+Acquire a Unique Item
+Find and purchase a rare or exotic good to enhance your shop’s offerings.
+
+Build Relationships with Suppliers
+Establish connections with local producers to ensure a steady supply of goods.
+
+Host a Market Stall
+Set up a stall at a local fair to showcase your products and attract new customers.
+
+-fisherman
+Catch a Rare Fish
+Find and catch a rare species that is prized in local markets for its value or beauty.
+
+Find the Best Bait
+Experiment with different baits to discover what attracts the most fish in your region.
+
+Sell Your Best Catch
+Successfully sell a particularly large or valuable fish at the market.
+
+Avoid a Dangerous Storm
+Safely navigate back to shore while fishing during an unexpected storm.
+
+-pirate
+Plunder a Merchant Ship
+Successfully raid a passing merchant vessel for treasure and supplies.
+
+Map a Smuggler's Route
+Chart a secret pathway known only to smugglers, allowing for safer and more profitable journeys.
+
+Escape a Naval Pursuit
+Outmaneuver a pursuing naval ship and evade capture through clever tactics.
+
+Find a Hidden Cove
+Discover a secluded cove that serves as a perfect hideout for your crew and ship.
+
+-gladiator
+Win a Small Arena Match
+Compete in and win a local arena fight to gain recognition and improve your skills.
+
+Obtain a New Weapon
+Acquire a unique or better weapon that enhances your combat abilities in the arena.
+
+Train with a Veteran Gladiator
+Spend time learning techniques and strategies from an experienced gladiator.
+
+Gain Favor with the Crowd
+Perform spectacularly in the arena to earn the adoration of the audience and boost your reputation.
+
+-outlaw
+Elude Capture
+Successfully avoid a local bounty hunter or law enforcement agent determined to bring you in.
+
+Steal Supplies for the Poor
+Acquire food or resources from the wealthy to distribute to those in need.
+
+Set Up a Hideout
+Establish a safe location where you and your crew can rest and plan without fear of discovery.
+
+Forge a Useful Alliance
+Form a temporary alliance with another group (e.g., bandits or rebels) to achieve a mutual goal.

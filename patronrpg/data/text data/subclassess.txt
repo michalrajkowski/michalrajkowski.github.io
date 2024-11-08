@@ -1,0 +1,15 @@
+-alchemist
+-artisan
+-jester
+-occultist
+-knight
+-thief
+-bard
+-mage
+-cleric
+-shaman
+-merchant
+-fisherman
+-pirate
+-gladiator
+-outlaw

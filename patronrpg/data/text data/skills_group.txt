@@ -1,0 +1,82 @@
+**Combat**
+- Melee Combat
+- Ranged Combat
+- Defense
+- Unarmed Combat
+
+**Crafting**
+- Blacksmithing
+- Alchemy
+- Carpentry
+- Jewelry Making
+- Trading
+
+**Exploration**
+- Navigation
+- Hunting
+- Foraging
+- Survival
+
+**Social**
+- Persuasion
+- Deception
+- Intimidation
+- Performance
+
+**Knowledge**
+- History
+- Arcana
+- Religion
+- Geography
+
+**Specialized**
+- Sailing
+- Thievery
+- Beast Handling
+- Herbalism
+
+**Miscellaneous**
+- Cooking
+- Dancing
+- Cartography
+- Mining
+
+**Magic**
+- Elemental Manipulation
+- Enchanting
+- Divination
+- Illusion
+
+**Stealth**
+- Sneaking
+- Eavesdropping
+- Disguise
+
+**Technology**
+- Mechanics
+- Engineering
+- Traps
+
+**Leadership**
+- Leadership
+- Tactics
+- Charisma
+
+**Psychological**
+- Empathy
+- Intuition
+- Mental Resilience
+
+**Environmental**
+- Animal Lore
+- Weather Prediction
+- Landscaping
+
+**Ritual**
+- Ritual Casting
+- Ceremonial Arts
+
+**Lifestyle**
+- Gambling
+- Gardening
+- Storytelling

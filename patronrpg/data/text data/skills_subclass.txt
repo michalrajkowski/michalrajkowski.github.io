@@ -1,0 +1,104 @@
+-alchemist
+- Alchemy  
+- Herbalism  
+- Crafting  
+- Arcana  
+- Trading  
+
+-artisan
+- Crafting  
+- Blacksmithing  
+- Carpentry  
+- Jewelry Making  
+- Trading  
+
+-jester
+- Performance  
+- Deception  
+- Dancing  
+- Gambling  
+- Storytelling  
+
+-occultist
+- Arcana  
+- Divination  
+- Ritual Casting  
+- Religion  
+- Illusion  
+
+-knight
+- Melee Combat  
+- Defense  
+- Leadership  
+- Tactics  
+- History  
+
+-thief
+- Thievery  
+- Sneaking  
+- Eavesdropping  
+- Deception  
+- Lockpicking  
+
+-bard
+- Performance  
+- Storytelling  
+- Dancing  
+- Persuasion  
+- Deception  
+
+-mage
+- Arcana  
+- Elemental Manipulation  
+- Enchanting  
+- Divination  
+- Illusion  
+
+-cleric
+- Religion  
+- Healing  
+- Ritual Casting  
+- Arcana  
+- Empathy  
+
+-shaman
+- Herbalism  
+- Ritual Casting  
+- Animal Lore  
+- Divination  
+- Elemental Manipulation  
+
+-merchant
+- Trading  
+- Persuasion  
+- Negotiation  
+- Crafting  
+- History  
+
+-fisherman
+- Fishing  
+- Navigation  
+- Survival  
+- Foraging  
+- Weather Prediction 
+
+-pirate
+- Sailing  
+- Navigation  
+- Melee Combat  
+- Thievery  
+- Intimidation  
+
+-gladiator
+- Melee Combat  
+- Unarmed Combat  
+- Defense  
+- Intimidation  
+- Tactics  
+
+-outlaw
+- Thievery  
+- Sneaking  
+- Ranged Combat  
+- Deception  
+- Survival  

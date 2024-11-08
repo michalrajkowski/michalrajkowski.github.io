@@ -1,0 +1,211 @@
+-alchemist
+Azmirra Vialthorn
+Kaldric Fumespark
+Selvina Goldbrew
+Eldrin Quicksilver
+Morwen Ashveil
+Briarix Pyrebane
+Thalior Dustweaver
+Zarael Flaskbinder
+Elora Vaporglow
+Vothen Emberglass
+
+-artisan
+Crafan Forgewell
+Tessira Goldthread
+Marven Oakhammer
+Eluna Stoneshine
+Fildor Ironmold
+Silvion Glasspainter
+Barael Clayhands
+Vendel Gearwright
+Lyra Threadsong
+Thorin Bronzevein
+
+-jester
+Jax Merrymaker
+Fizzlebop Jinglefoot
+Wren Ticklequill
+Zorbin Laughsplash
+Tansy Chuckleberry
+Quibble Frollick
+Boffin Whimsywink
+Riddle Snickerleaf
+Jesterin Flipflap
+Pippin Gleeweaver 
+
+-occultist
+Seraphine Shadowbinder
+Malachai Darkwhisper
+Thalia Nightshade
+Vespera Voidcaller
+Lucian Gravesight
+Zephyrin Duskwalker
+Nyx Ravenstone
+Corvin Soulweaver
+Elowen Cursedlight
+Xandros Bloodmoon
+
+-knight
+Seraphis Steelheart
+Aric Brightblade
+Lyra Dawnshield
+Thorne Ironfist
+Kaelan Silvercrest
+Elysia Valorbound
+Garrick Stonehelm
+Valeria Fireforge
+Cedric Hawkstrike
+Alaric Frostguard
+
+-thief
+Cinder Nightshadow
+Vex Silverfinger
+Riven Quickstep
+Nyssa Darkwhisper
+Thorne Mistwalker
+Jarek Swiftcloak
+Lirael Shadowdance
+Quinn Slyfoot
+Zephyr Blackdagger
+Corwin Flickerflame
+
+-bard
+Lyric Starstrum
+Rowan Dreamweaver
+Pippin Tuneheart
+Seren Melodyshade
+Jorvan Whistletune
+Elara Songspire
+Fennel Brightchord
+Thistle Nightingale
+Caelum Harmonics
+Mira Duskstrum
+
+-mage
+Eldrin Spellweaver
+Seraphina Starfire
+Thalor Arcaneveil
+Vespera Shadowmancer
+Calista Luminara
+Zephyros Frostflame
+Mirabel Etherwind
+Alaric Runegrasp
+Nyx Emberwhisper
+Kaelith Dreambinder
+
+-cleric
+Elowen Lightbringer
+Thorne Faithkeeper
+Seraphis Dawnwarden
+Mirae Hopefulheart
+Cedric Soulbinder
+Isolde Blessingsong
+Garrin Shieldbearer
+Selene Starwatcher
+Althea Pureheart
+Thalia Gracekeeper
+
+-shaman
+Kaelin Spiritwalker
+Thorne Earthshaper
+Elara Mooncaller
+Branwen Stormsinger
+Riven Windwhisper
+Nyssa Wildheart
+Garrick Firetender
+Zephyrin Dreamseer
+Aeliana Beastfriend
+Korrin Soulkeeper
+
+-other
+Alaric Stormrider  
+Seraphina Brightblade  
+Thorne Ironfist  
+Elowen Moonshadow  
+Garrick Stoneheart  
+Lirael Swiftfoot  
+Dorian Nightingale  
+Kaelin Frostwhisper  
+Brynn Emberflame  
+Roderick Ashvale  
+Isolde Silverbrook  
+Caelum Shadowdancer  
+Elysia Starfire  
+Fenwick Darkwood  
+Sylas Thornweaver  
+Mira Windwalker  
+Jareth Blackthorn  
+Thalia Raincaller  
+Cedric Goldenshield  
+Aislin Mistvale  
+Draven Wyrmscale  
+Elira Sunstrider  
+Torin Stonebriar  
+Nyssa Winterglow  
+Balin Earthshaker  
+Lyra Wildrose  
+Kael Thundershout  
+Arwen Dreamweaver  
+Corwin Ironleaf  
+Serin Brightstar  
+
+-merchant
+Tamsin Goldspinner
+Cedric Tradewind
+Elowen Coinchaser
+Barrow Blackmarket
+Lirael Silverhand
+Finnian Bargainhart
+Jorvan Wealthweaver
+Nyssa Fairtrade
+Roderic Goodskeeper
+Thalia Marketmuse
+
+-fisherman
+Calder Deepwater
+Lira Tidecaster
+Finnan Netsworn
+Selric Wavechaser
+Mirae Seastrider
+Thorne Driftwood
+Joryn Saltwhisker
+Kellan Fishhook
+Brynn Oceaneye
+Taran Riverbend
+
+-pirate
+Captain Blacktide
+Selene Stormrider
+Jaxon Sharpfang
+Morgana Seablade
+Riven Cutlass
+Thalia Darkwater
+Finn Bloodsail
+Kael Driftwind
+Iskar Ironhook
+Vesper Blackflag
+
+-gladiator
+Kael Bloodstrike
+Thalora Ironfist
+Garron Steelclash
+Selina Bonebreaker
+Rorik Bladefang
+Vesta Warbringer
+Khoros Skullcrusher
+Lyra Stormfist
+Draven Spearheart
+Valeria Shieldbane
+
+-outlaw
+Jarek Blackthorn
+Selene Quickshot
+Thorne Wildfang
+Vespera Dustwalker
+Corvin Shadowspur
+Rylin Grimstride
+Nyssa Rustcloak
+Kade Flintlock
+Lirael Ironhide
+Finnian Thorncloak
