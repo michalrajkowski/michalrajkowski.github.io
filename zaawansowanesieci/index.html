@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title></title>
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme" />
+    <link rel="stylesheet" href="plugin/highlight/zenburn.css" />
+	<link rel="stylesheet" href="css/layout.css" />
+	<link rel="stylesheet" href="plugin/customcontrols/style.css">
+
+	<link rel="stylesheet" href="plugin/reveal-pointer/pointer.css" />
+
+
+    <script defer src="dist/fontawesome/all.min.js"></script>
+
+	<script type="text/javascript">
+		var forgetPop = true;
+		function onPopState(event) {
+			if(forgetPop){
+				forgetPop = false;
+			} else {
+				parent.postMessage(event.target.location.href, "app://obsidian.md");
+			}
+        }
+		window.onpopstate = onPopState;
+		window.onmessage = event => {
+			if(event.data == "reload"){
+				window.document.location.reload();
+			}
+			forgetPop = true;
+		}
+
+		function fitElements(){
+			const itemsToFit = document.getElementsByClassName('fitText');
+			for (const item in itemsToFit) {
+				if (Object.hasOwnProperty.call(itemsToFit, item)) {
+					var element = itemsToFit[item];
+					fitElement(element,1, 1000);
+					element.classList.remove('fitText');
+				}
+			}
+		}
+
+		function fitElement(element, start, end){
+
+			let size = (end + start) / 2;
+			element.style.fontSize = `${size}px`;
+
+			if(Math.abs(start - end) < 1){
+				while(element.scrollHeight > element.offsetHeight){
+					size--;
+					element.style.fontSize = `${size}px`;
+				}
+				return;
+			}
+
+			if(element.scrollHeight > element.offsetHeight){
+				fitElement(element, start, size);
+			} else {
+				fitElement(element, size, end);
+			}		
+		}
+
+
+		document.onreadystatechange = () => {
+			fitElements();
+			if (document.readyState === 'complete') {
+				if (window.location.href.indexOf("?export") != -1){
+					parent.postMessage(event.target.location.href, "app://obsidian.md");
+				}
+				if (window.location.href.indexOf("print-pdf") != -1){
+					let stateCheck = setInterval(() => {
+						clearInterval(stateCheck);
+						window.print();
+					}, 250);
+				}
+			}
+	};
+
+
+        </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"><section  data-markdown><script type="text/template"></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Zaawansowane Modele SI - Chunkowanie
+#### III Zbiory Danych
+
+<img src="https://media.licdn.com/dms/image/v2/D5612AQHLl0-Twkr8SQ/article-cover_image-shrink_720_1280/B56ZfMFjZZH8AI-/0/1751475697980?e=2147483647&v=beta&t=pqoRUQiN5pxdGIo8K8uMk_DpPuz7iaZAdibOg_dLljE" alt="Konkurencja" style="object-fit: scale-down">
+
+Przygotowali:
+
+Michał Rajkowski   |  Mateusz Zbrocki   |   Michał Bernacki-Janson
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="https://raw.githubusercontent.com/MSzturc/obsidian-advanced-slides/main/imgs/demo.gif" alt="" style="object-fit: scale-down">
+
+
+Prezentacja wykonana za pomocą 
+
+[obsidian-advanced-slides](https://mszturc.github.io/obsidian-advanced-slides/)
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+## Plan prezentacji
+
+1. Zbiory Danych
+2. Plan Eksperymentów
+3. Model
+4. Przygotowany kod i badania
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# 1. Zbiory Danych
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Dlaczego specjalne zbiory?
+
+<img src="Attachments/Pasted image 20251112091549.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Dlaczego specjalne zbiory?
+
+- &shy;<!-- .element: class="fragment" data-fragment-index="1" -->w benchmarkach IR odpowiedzi zawierają się w pełni **w jednym fragmencie (passage)** . Np. MS MARCO
+- &shy;<!-- .element: class="fragment" data-fragment-index="2" -->w rzeczywistych dokumentach odpowiedź na pytanie rozsiana pomiędzy wiele zdań jednego dokumentu
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251126093352.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### ConTEB
+
+- **Con**text-aware **T**ext **E**mbedding **B**enchmark
+- posiada mapowania **query -> złote chunki** (rozsane po przestrzeni całego dokumentu)
+- Dwu częściowy:
+	- znane akademiczne zbiory (SQuAD, NarrativeQA, MLDR, Covid-QA) przetworzone na chunk retrieval
+	- nowe zbiory, reprezentujące trudne sytuacje (ko-referencja, niejednoznaczność tekstu)
+- **NanoBEIR 🍻** - bezkontekstowy "sanity check"
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### ConTEB - Repurposed academic sets
+
+- **SQuAD** - QA an tekstach Wikipedii; długie wpisy internetowe
+- **NarrativeQA** - długie historyjki; problem szerokiego kontekstu tekstu
+- **MLDR (multi-document long reading)** - cross-doc, cross-section retrieval
+- **Covid-QA** - dane domenowe; techniczne teksty
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### ConTEB - Controlled datasets
+
+1. **Ko-referencje** (Football, Geography)
+	- późne chunki zamieniają **named entities** na niejednoznaczne zwroty (on/ona itp)
+	- wymaga kontekstualizacji
+2. **Zrozumienie struktury** (Insurence)
+	- nie da sie odpowiedzieć na pytanie do tekstu bez wykorzystania struktury dokumentu (tytuły sekcji, podsekcji itp.)
+3. **Wieloznaczność** (ESG Reports)
+	- dokument budowany na bazie template'ów
+	- wiele fragmentów jest semantycznie bardzo podobnych
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### NanoBEIR
+
+<img src="Attachments/Pasted image 20251112093820.png" alt="" style="object-fit: scale-down">
+
+
+Bezkontekstowy zbiór danych. Wykorzystany, by modele ucząc się zaawansowanych relacji tekstu nie pogarszały zdolności do odpowiadania na proste pytania. 
+
+- 50 queries per dataset, ~10k documents each
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+| Dataset               | Opis |
+|-----------------------|------|
+| NanoClimateFEVER      | Weryfikacja twierdzeń o klimacie. |
+| NanoDBPedia           | Wyszukiwanie faktów z DBPedia. |
+| NanoFEVER             | Weryfikacja faktów z Wikipedii. |
+| NanoFiQA2018          | Pytania i odpowiedzi z finansów. |
+| NanoHotpotQA          | Pytania wymagające wieloetapowego wyszukiwania. |
+| NanoMSMARCO           | Realistyczne wyszukiwanie odpowiedzi. |
+| NanoNFCorpus          | Niefaktograficzne zapytania informacyjne. |
+| NanoNQ                | Pytania otwarte z Natural Questions. |
+| NanoQuoraRetrieval    | Wykrywanie duplikatów pytań. |
+| NanoSCIDOCS           | Wyszukiwanie dokumentów naukowych. |
+| NanoArguAna           | Wyszukiwanie kontrargumentów. |
+| NanoSciFact           | Weryfikacja twierdzeń naukowych. |
+| NanoTouche2020        | Wyszukiwanie argumentacyjne. |
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Opcja "odważna" - nasz własny dataset
+
+(choć stworzenie dobrego datasetu do ewaluacji wymagałoby pewnie drugie tyle czasu co cały projekt)
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Plan Eksperymentów
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Hipotezy badawcze
+
+> H1: Late chunking daje wyższe wyniki w zadaniach retrievalowych wymagających kontekstu dokumentu (np. koreferencji lub rozumienia struktury tekstu) w porównaniu z metodami tradycyjnego chunkowania.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Hipotezy badawcze
+
+> H2: Late chunking nie powoduje degradacji wyników w klasycznych benchmarkach niezależnych od kontekstu (np. NanoBEIR).
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Hipotezy badawcze
+
+> H3: Late chunking pozwala zachować korzystny kompromis pomiędzy dokładnością a złożonością obliczeniową procesu embeddingu.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Porównane metody
+- BM25
+- Fixed-size chunking
+- semantic chunking
+- hybrid retrieval (Rank Fusion)
+- Late chunking
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Procedura eksperymentalna
+- 1) Podział danych na segmenty
+- 2) Osadzanie fragmnetów tekstu
+- 3) Budowa wektorowej bazy wiedzy (ANN)
+- 4) Retrieval k najbardziej podobnych fragmentów + ewaluacja 
+	- liczona względem *gold fragments*
+	- Recall @ k, Mean Reciprocal Rank (MRR), Normalized Discounted Cumulative Gain (nDCG@k). 
+	- Dla QA dodatkowo
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Model
+
+<img src="Attachments/Pasted image 20251125220851.png" alt="" style="object-fit: scale-down">
+
+<img src="Attachments/Pasted image 20251125220905.png" alt="" style="object-fit: scale-down">
+
+
+<img src="Attachments/Pasted image 20251125220836.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Jinjav2 = BERT + ALiBi +  contrastive fine-tuning + mean-pooling + normalization head
+
+**Context:**
+- BERT -> 512 😬
+- Jinja v2 -> 8192 💪😎
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Attention with Linear Biases (ALiBi)
+
+<img src="Attachments/Pasted image 20251125212339.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Kodowanie pozycyjne i self-atention
+
+<img src="Attachments/Pasted image 20251125213341.png" alt="" style="object-fit: scale-down">
+
+
+W skrócie:
+- przy RNN model dostaje kolejne słowa sekwencyjnie -> rozumie ich kolejność
+- transformer dostaje cały ciąg tokenów równolegle -> utrata informacji o pozycji, ekwiwariantność wobec zmiany kolejności słow
+- trzeba coś dodać, rodzaj kodowania ustalono eksperymentalnie
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125213952.png" alt="" style="object-fit: scale-down">
+
+
+**extrtapolacja** - zdolność modelu do wykonywania zadania na tekstach dłuższych niż teksty w zbiorze treningowym. 
+
+**perplexity** -  pewność modelu w ułożeniu tokenu na danej pozycji
+
+<img src="https://cas-bridge.xethub.hf.co/xet-bridge-us/621ffdd236468d709f1835cf/593ed49188444db71acdf198644f06d1cba2007eb326e618cd09a54fb970add1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cas%2F20251125%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251125T204016Z&X-Amz-Expires=3600&X-Amz-Signature=743702543a73762137e7b7f5c82da4cb9d5990d51bf7f2d064dc9fd7613a3197&X-Amz-SignedHeaders=host&X-Xet-Cas-Uid=68b19cc0d58772335e7dd793&response-content-disposition=inline%3B+filename*%3DUTF-8%27%27ppl_sliding.gif%3B+filename%3D%22ppl_sliding.gif%22%3B&response-content-type=image%2Fgif&x-id=GetObject&Expires=1764106816&Policy=eyJTdGF0ZW1lbnQiOlt7IkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc2NDEwNjgxNn19LCJSZXNvdXJjZSI6Imh0dHBzOi8vY2FzLWJyaWRnZS54ZXRodWIuaGYuY28veGV0LWJyaWRnZS11cy82MjFmZmRkMjM2NDY4ZDcwOWYxODM1Y2YvNTkzZWQ0OTE4ODQ0NGRiNzFhY2RmMTk4NjQ0ZjA2ZDFjYmEyMDA3ZWIzMjZlNjE4Y2QwOWE1NGZiOTcwYWRkMSoifV19&Signature=wEW9xBGNBOx%7EncjE3qrDxvj3ct3DEThPOdyqk2UVJAlUane56QJQS%7EmUtZ-i2Zk3QuY8oKySwNCmCZBStOtz6ssqfo7uJ8R8Lcejxi7tNIm6GiHg6Y9BX6sW5dYrAUqdioYzssBUR-ouWryH9eqb4HTEPT%7Eb1yvVdsgMsCqPDYNm3PpRUByq%7E3oLj%7EtllekC-EfNNGp-z1SZACGPubn%7ESuFMlLJnb6%7Et5UM2dwCnsfWKvijJW1TVSsVmsYVG4u2KpNgrBHGlfxIEFuh-zhFReiHwdnbPxY6lbkPllw%7EaNU0-Weon3cKkRwrPbFYOi-5MmHwAsOIq0Jd6Mkb09HrWFA__&Key-Pair-Id=K2L8F4GPSG1IFC" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### ALiBi
+
+<img src="Attachments/Pasted image 20251125221132.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### ALiBi
+
+<img src="Attachments/Pasted image 20251125224203.png" alt="" style="object-fit: scale-down">
+
+
+m - parametr spadku o wartości zależnej od głowy atencji; szereg geometryczny `$\frac{1}{2^m}$`
+i - pozycja tokenu Query
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Eskperymenty / zabawa modelem
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125222454.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125222510.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+No działa :)
+<img src="Attachments/Pasted image 20251125222622.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Badania możliwości kontekstualizacji
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Wstrzyknięcie "dummy sentence"
+<img src="Attachments/Pasted image 20251125222734.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Dummy in multiple texts insertion
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125222849.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125223732.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125222920.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125223136.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125223229.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125223256.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125223329.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125223342.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### LateChunker na poziomie zdań
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125224726.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125224850.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20251125224638.png" alt="" style="object-fit: scale-down">
+
+<img src="Attachments/Pasted image 20251125224921.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Query + Passage late chunking 🐘🎨
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Query: `"What color is the biggest animal in Africa?"` 
+
+<img src="Attachments/Pasted image 20251125232437.png" alt="" style="object-fit: scale-down">
+
+Teksty o zwierzętach + 2-hop question. Czy late chunking pozwoli lepiej znaleźć tekst o kolorze słownia?
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+W skrócie - nie wyszło...
+
+<img src="Attachments/Pasted image 20251125232557.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Zwykła koonkatenacja posiadała silną preferencję wobec tekstów o słoniach.
+
+<img src="Attachments/Pasted image 20251125231119.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Konkatenacja + late chunking po query zwracał więcej tekstów na temat kolorów. Choć teksty o słoniach były wciąż obecne. 
+
+(możliwe, że metoda lepsza do balansowania informacji, a nie lepszego przeszukiwania?)
+
+<img src="Attachments/Pasted image 20251125231134.png" alt="" style="object-fit: scale-down">
+</div></script></section></div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/math/math.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+	<script src="plugin/chart/chart.min.js"></script>
+	<script src="plugin/chart/plugin.js"></script>
+	<script src="plugin/menu/menu.js"></script>
+	<script src="plugin/customcontrols/plugin.js"></script>
+	<script src="plugin/reveal-pointer/pointer.js"></script>
+
+    <script>
+      function extend() {
+        var target = {};
+        for (var i = 0; i < arguments.length; i++) {
+          var source = arguments[i];
+          for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+        return target;
+      }
+
+	  function isLight(color) {
+		let hex = color.replace('#', '');
+
+		// convert #fff => #ffffff
+		if(hex.length == 3){
+			hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
+		}
+
+		const c_r = parseInt(hex.substr(0, 2), 16);
+		const c_g = parseInt(hex.substr(2, 2), 16);
+		const c_b = parseInt(hex.substr(4, 2), 16);
+		const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
+		return brightness > 155;
+	}
+
+	var bgColor = getComputedStyle(document.documentElement).getPropertyValue('--r-background-color').trim();
+	var isLight = isLight(bgColor);
+
+	if(isLight){
+		document.body.classList.add('has-light-background');
+	} else {
+		document.body.classList.add('has-dark-background');
+	}
+
+      // default options to init reveal.js
+      var defaultOptions = {
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealZoom,
+          RevealNotes,
+          RevealMath.MathJax3,
+		  RevealMermaid,
+		  RevealChart,
+		  RevealCustomControls,
+		  RevealMenu,
+	      RevealPointer,
+        ],
+
+
+    	allottedTime: 120 * 1000,
+
+		mathjax3: {
+			mathjax: 'plugin/math/mathjax/tex-mml-chtml.js',
+		},
+		markdown: {
+		  gfm: true,
+		  mangle: true,
+		  pedantic: false,
+		  smartLists: false,
+		  smartypants: false,
+		},
+
+		mermaid: {
+			theme: isLight ? 'default' : 'dark',
+		},
+
+		customcontrols: {
+			controls: [
+			]
+		},
+		menu: {
+			loadIcons: false
+		}
+      };
+
+      // options from URL query string
+      var queryOptions = Reveal().getQueryHash() || {};
+
+      var options = extend(defaultOptions, {"width":960,"height":700,"margin":-2.96,"minScale":0.2,"maxScale":1,"controls":true,"progress":true,"slideNumber":true,"transition":"none","transitionSpeed":"default"}, queryOptions);
+    </script>
+
+    <script>
+      Reveal.initialize(options);
+    </script>
+  </body>
+
+  <!-- created with Advanced Slides -->
+</html>
