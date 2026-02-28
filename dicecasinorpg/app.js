@@ -68,6 +68,7 @@ async function bootstrap() {
   cardLibrary = await loadCards();
   resetCollectedStars();
   setupGrid();
+  setupViewportSync();
   fillTable();
   renderTable();
   statusElement.textContent = "Tap or click any card to replace it.";
@@ -324,18 +325,36 @@ function ensureResizeObserver() {
   });
 }
 
+function setupViewportSync() {
+  const rerenderLayouts = () => {
+    requestAnimationFrame(() => {
+      document.querySelectorAll(".card").forEach((cardElement) => {
+        syncCardLayout(cardElement);
+      });
+    });
+  };
+
+  window.addEventListener("resize", rerenderLayouts);
+  window.addEventListener("orientationchange", rerenderLayouts);
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", rerenderLayouts);
+  }
+}
+
 function syncCardLayout(cardElement) {
   const cardStyles = window.getComputedStyle(cardElement);
   const horizontalPadding =
     parseFloat(cardStyles.paddingLeft) + parseFloat(cardStyles.paddingRight);
   const verticalPadding =
     parseFloat(cardStyles.paddingTop) + parseFloat(cardStyles.paddingBottom);
-  const cardWidth = Math.max(140, cardElement.clientWidth - horizontalPadding);
-  const cardHeight = Math.max(180, cardElement.clientHeight - verticalPadding);
+  const cardWidth = Math.max(56, cardElement.clientWidth - horizontalPadding);
+  const cardHeight = Math.max(88, cardElement.clientHeight - verticalPadding);
 
-  const nameAreaHeight = clampNumber(cardHeight * 0.2, 34, cardHeight * 0.26);
-  const cardGap = clampNumber(Math.min(cardWidth, cardHeight) * 0.018, 4, 10);
-  const baseTopRowHeight = clampNumber(cardHeight * 0.12, 24, cardHeight * 0.18);
+  const shortSide = Math.min(cardWidth, cardHeight);
+  const nameBandHeight = clampNumber(cardHeight * 0.2, 14, cardHeight * 0.28);
+  const cardGap = clampNumber(shortSide * 0.02, 2, 10);
+  const baseTopRowHeight = clampNumber(cardHeight * 0.11, 14, cardHeight * 0.18);
 
   const costsNode = cardElement.querySelector(".card__costs");
   const maxSymbols = Math.max(
@@ -343,48 +362,56 @@ function syncCardLayout(cardElement) {
     Math.min(5, Number(costsNode?.dataset.maxCount ?? "1")),
   );
   const remainingHeight = Math.max(
-    56,
-    cardHeight - baseTopRowHeight - nameAreaHeight - cardGap * 3,
+    24,
+    cardHeight - baseTopRowHeight - cardGap * 2,
   );
-  let costAreaHeight = clampNumber(remainingHeight * 0.72, 56, cardHeight * 0.52);
-  const costGap = clampNumber(cardGap * 0.8, 3, 8);
+  let costAreaHeight = clampNumber(remainingHeight * 0.72, 24, cardHeight * 0.56);
+  const costGap = clampNumber(cardGap * 0.85, 2, 8);
   let horizontalCostSize =
     (cardWidth - costGap * Math.max(0, maxSymbols - 1)) / maxSymbols;
   let verticalCostSize = (costAreaHeight - costGap) / 2;
   let costSize = clampNumber(
     Math.min(horizontalCostSize, verticalCostSize),
-    16,
-    Math.min(cardWidth * 0.24, 84),
+    8,
+    Math.min(cardWidth * 0.28, cardHeight * 0.22, 84),
   );
-  const iconBaseSize = clampNumber(costSize * 1.02, 18, cardWidth * 0.22);
+  const iconBaseSize = clampNumber(costSize * 1.02, 10, cardWidth * 0.26);
   const topRowHeight = clampNumber(
     Math.max(baseTopRowHeight, iconBaseSize * 1.08),
-    24,
+    14,
     cardHeight * 0.2,
   );
   const adjustedRemainingHeight = Math.max(
-    56,
-    cardHeight - topRowHeight - nameAreaHeight - cardGap * 3,
+    24,
+    cardHeight - topRowHeight - cardGap * 2,
   );
-  costAreaHeight = clampNumber(adjustedRemainingHeight * 0.72, 56, cardHeight * 0.52);
+  costAreaHeight = clampNumber(adjustedRemainingHeight * 0.72, 24, cardHeight * 0.56);
   horizontalCostSize =
     (cardWidth - costGap * Math.max(0, maxSymbols - 1)) / maxSymbols;
   verticalCostSize = (costAreaHeight - costGap) / 2;
   costSize = clampNumber(
     Math.min(horizontalCostSize, verticalCostSize),
-    16,
-    Math.min(cardWidth * 0.24, 84),
+    8,
+    Math.min(cardWidth * 0.28, cardHeight * 0.22, 84),
   );
-  const syncedIconSize = clampNumber(costSize * 1.02, 18, cardWidth * 0.22);
+  const syncedIconSize = clampNumber(costSize * 1.02, 10, cardWidth * 0.26);
   const nameNode = cardElement.querySelector(".card__name");
   const nameFontSize = estimateNameFontSize(
     nameNode?.textContent ?? "",
-    cardWidth,
-    nameAreaHeight,
+    Math.max(24, cardWidth - syncedIconSize * 2 - cardGap * 3),
+    nameBandHeight,
   );
+  const titleSideClearance = clampNumber(
+    syncedIconSize + cardGap * 1.4,
+    12,
+    Math.max(12, cardWidth * 0.34),
+  );
+  const nameTopOffset = clampNumber(cardGap * 0.35, 1, 8);
 
   cardElement.style.setProperty("--top-row-height", `${topRowHeight}px`);
-  cardElement.style.setProperty("--name-area-height", `${nameAreaHeight}px`);
+  cardElement.style.setProperty("--name-band-height", `${nameBandHeight}px`);
+  cardElement.style.setProperty("--name-top-offset", `${nameTopOffset}px`);
+  cardElement.style.setProperty("--title-side-clearance", `${titleSideClearance}px`);
   cardElement.style.setProperty("--name-font-size", `${nameFontSize}px`);
   cardElement.style.setProperty("--badge-size", `${syncedIconSize}px`);
   cardElement.style.setProperty("--emoji-size", `${syncedIconSize}px`);
@@ -401,16 +428,16 @@ function clampNumber(value, min, max) {
 function estimateNameFontSize(cardName, availableWidth, availableHeight) {
   const cleanedName = cardName.trim();
   if (!cleanedName) {
-    return 10;
+    return 8;
   }
 
   let fontSize = clampNumber(
-    Math.min(availableHeight * 0.6, availableWidth * 0.12),
-    11,
+    Math.min(availableHeight * 0.72, availableWidth * 0.16),
+    8,
     28,
   );
 
-  while (fontSize > 10) {
+  while (fontSize > 8) {
     const averageCharWidth = fontSize * 0.56;
     const maxCharsPerLine = Math.max(4, Math.floor(availableWidth / averageCharWidth));
     const estimatedLines = estimateWrappedLineCount(cleanedName, maxCharsPerLine);
@@ -423,7 +450,7 @@ function estimateNameFontSize(cardName, availableWidth, availableHeight) {
     fontSize -= 0.5;
   }
 
-  return 10;
+  return 8;
 }
 
 function estimateWrappedLineCount(text, maxCharsPerLine) {

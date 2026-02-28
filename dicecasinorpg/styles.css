@@ -20,7 +20,7 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
+  min-height: 100dvh;
   background:
     radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 34%),
     radial-gradient(circle at bottom right, rgba(234, 179, 8, 0.12), transparent 30%),
@@ -31,14 +31,14 @@ body {
 }
 
 .app-shell {
-  height: 100vh;
-  padding: 10px;
+  height: 100dvh;
+  min-height: 100dvh;
+  padding: 8px;
   display: grid;
-  gap: 8px;
-  grid-template-rows: auto 1fr auto;
+  gap: 6px;
+  grid-template-rows: 1fr auto;
 }
 
-.topbar,
 .statusbar,
 .table-frame {
   border: 1px solid var(--panel-border);
@@ -47,37 +47,14 @@ body {
   backdrop-filter: blur(8px);
 }
 
-.topbar {
-  padding: 10px 14px;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.eyebrow {
-  margin: 0 0 4px;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.topbar h1 {
-  margin: 0;
-  font-size: clamp(1rem, 2vw, 1.35rem);
-}
-
-.hint,
 .statusbar p {
   margin: 0;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: 0.76rem;
 }
 
 .table-frame {
-  padding: 8px;
+  padding: 6px;
   overflow: hidden;
   min-height: 0;
 }
@@ -110,14 +87,14 @@ body {
 
 .collector-slot__star {
   display: block;
-  font-size: clamp(1rem, 2.1vw, 1.35rem);
+  font-size: clamp(0.88rem, 2vw, 1.2rem);
   font-weight: 900;
 }
 
 .collector-slot__count {
   display: block;
   margin-top: 2px;
-  font-size: clamp(0.68rem, 1.4vw, 0.88rem);
+  font-size: clamp(0.62rem, 1.25vw, 0.8rem);
   font-weight: 800;
   color: #f8fafc;
 }
@@ -153,7 +130,6 @@ body {
   display: grid;
   grid-template-rows:
     var(--top-row-height, 40px)
-    var(--name-area-height, 64px)
     1fr
     var(--cost-area-height, 76px);
   gap: var(--card-gap, 6px);
@@ -177,21 +153,29 @@ body {
   justify-content: space-between;
   gap: 8px;
   min-height: var(--top-row-height, 40px);
+  position: relative;
+  z-index: 2;
 }
 
 .card__name {
   margin: 0;
   padding: 0 2px;
+  position: absolute;
+  top: var(--name-top-offset, 2px);
+  left: var(--title-side-clearance, 24px);
+  right: var(--title-side-clearance, 24px);
   text-align: center;
   font-weight: 700;
   font-size: var(--name-font-size, 0.78rem);
   line-height: 1.08;
-  min-height: var(--name-area-height, 3.45em);
-  height: var(--name-area-height, 3.45em);
+  min-height: var(--name-band-height, 3.45em);
+  max-height: var(--name-band-height, 3.45em);
   display: grid;
-  align-content: center;
+  align-content: start;
   overflow: hidden;
   word-break: break-word;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .card__emoji {
@@ -334,24 +318,24 @@ body {
 }
 
 .statusbar {
-  padding: 8px 12px;
+  padding: 6px 10px;
 }
 
 @media (max-width: 860px) {
   .app-shell {
-    padding: 8px;
-  }
-
-  .table-frame {
     padding: 6px;
   }
 
+  .table-frame {
+    padding: 4px;
+  }
+
   .card-grid {
-    gap: 8px;
+    gap: 6px;
   }
 
   .card {
-    padding: 7px 8px 8px;
+    padding: 6px 6px 7px;
   }
 
   .card {
@@ -370,5 +354,13 @@ body {
   .collector-slot {
     border-radius: 12px;
     padding: 3px 2px;
+  }
+
+  .statusbar {
+    padding: 5px 8px;
+  }
+
+  .statusbar p {
+    font-size: 0.68rem;
   }
 }

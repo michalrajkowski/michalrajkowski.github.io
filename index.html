@@ -3,85 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Website</title>
+    <title>Project Hub</title>
     <style>
-        
-        body {
-            background-color: black; 
-            color: white; 
-            font-family: Arial, sans-serif; 
-            text-align: center; 
-            display: flex; /* Use flexbox */
-            flex-direction: column; /* Arrange items vertically */
-            align-items: center; /* Center items horizontally */
-            justify-content: flex-start;
-            min-height: 100vh;
-            margin: 0; /* Remove default margin */
-            padding: 40px 20px 120px;
+        :root {
+            color-scheme: dark;
+            --bg: #0a0c10;
+            --panel: rgba(14, 20, 29, 0.88);
+            --panel-strong: rgba(20, 28, 40, 0.96);
+            --border: rgba(255, 255, 255, 0.1);
+            --text: #f2f5f8;
+            --muted: #a8b1bd;
+            --accent: #7cc7ff;
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        }
+
+        * {
             box-sizing: border-box;
         }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 32px 20px 48px;
+            background:
+                radial-gradient(circle at top left, rgba(124, 199, 255, 0.15), transparent 35%),
+                radial-gradient(circle at top right, rgba(110, 231, 183, 0.12), transparent 30%),
+                linear-gradient(180deg, #0d1118 0%, #090b10 100%);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .shell {
+            width: min(1080px, 100%);
+            margin: 0 auto;
+            padding: 28px;
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            background: var(--panel);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            margin: 0 0 8px;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3.4rem);
+            line-height: 1.05;
+        }
+
         .games-container {
-            display: flex; /* Use flexbox */
-            flex-wrap: wrap; /* Wrap items to next line */
-            justify-content: center; /* Center items horizontally */
-            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
         }
+
         .game {
-            margin: 10px; /* Add spacing between games */
-            padding: 20px;
-            background-color: #333;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 200px; /* Set width of each game box */
-            display: flex; /* Use flexbox */
-            flex-direction: column; /* Arrange items vertically */
-            align-items: center; /* Center items horizontally */
+            display: block;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: var(--panel-strong);
+            color: inherit;
+            text-decoration: none;
+            transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
         }
+
+        .game:hover,
+        .game:focus-visible {
+            transform: translateY(-4px);
+            border-color: rgba(124, 199, 255, 0.4);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.28);
+            outline: none;
+        }
+
         .game img {
-            width: 150px;
-            border-radius: 10px;
+            display: block;
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.04);
         }
-        .game h2 {
-            margin-top: 10px;
-            font-size: 20px;
+
+        .footer-note {
+            margin: 24px 0 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
         }
-        .worker {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+
+        @media (max-width: 640px) {
+            body {
+                padding: 16px;
+            }
+
+            .shell {
+                padding: 20px;
+                border-radius: 22px;
+            }
+
+            .game img {
+                height: 140px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Test Website home page</h1>
-    <p>It is a bit chaotic for now.</p>
-    <h2>Games:</h2>
-    <div class="games-container">
-        <div class="game" onclick="window.location.href='/thecandybox/'">
-            <img src="images/candyboxdelux.PNG" alt="Candy Box Deluxe">
-            <h2>Candy Box Deluxe</h2>
-        </div>
-        <div class="game" onclick="window.location.href='/celuralautomata/'">
-            <img src="images/ca2.PNG" alt="Cellular Automata">
-            <h2>Cellular Automata</h2>
-        </div>
-        <div class="game" onclick="window.location.href='/giantking/'">
-            <img src="images/ScreenFinal.png" alt="Giant King">
-            <h2>The Giant King</h2>
-        </div>
-        <div class="game" onclick="window.location.href='/patronrpg/'">
-            <img src="images/Construction.png" alt="Patron RPG">
-            <h2>Patron RPG</h2>
-        </div>
-        <div class="game" onclick="window.location.href='/dicecasinorpg/'">
-            <img src="images/dice_casino.png" alt="Dice Casino RPG">
-            <h2>Dice Casino RPG</h2>
-        </div>
-    </div>
-    <!-- Worker GIF -->
-    <div class="worker">
-        <img src="https://www.fg-a.com/under-construction/construction-worker-animation.gif" alt="Construction Worker">
-    </div>
+    <main class="shell">
+        <header class="hero">
+            <p class="eyebrow">Static Project Hub</p>
+            <h1>Games and Experiments</h1>
+        </header>
+
+        <section class="games-container" aria-label="Projects">
+            <a class="game" href="/thecandybox/">
+                <img src="images/candyboxdelux.PNG" alt="Candy Box Deluxe">
+            </a>
+            <a class="game" href="/celuralautomata/">
+                <img src="images/ca2.PNG" alt="Cellular Automata">
+            </a>
+            <a class="game" href="/giantking/">
+                <img src="images/ScreenFinal.png" alt="Giant King">
+            </a>
+            <a class="game" href="/patronrpg/">
+                <img src="images/Construction.png" alt="Patron RPG">
+            </a>
+            <a class="game" href="/dicecasinorpg/">
+                <img src="images/dice_casino.png" alt="Dice Casino RPG">
+            </a>
+        </section>
+
+        <p class="footer-note">by Micraj</p>
+    </main>
 </body>
 </html>
