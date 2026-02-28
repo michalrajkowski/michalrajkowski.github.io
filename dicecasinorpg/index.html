@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dice Card Table</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Static Prototype</p>
+          <h1>Dice Card Table</h1>
+        </div>
+        <p class="hint">Tap or click any card to replace it.</p>
+      </header>
+
+      <section class="table-frame">
+        <div class="table-layout">
+          <aside class="collector-bar" aria-label="Collected stars">
+            <div class="collector-slot collector-slot--gold" title="Gold collected">
+              <span class="collector-slot__star">★</span>
+              <span id="count-gold" class="collector-slot__count">0</span>
+            </div>
+            <div class="collector-slot collector-slot--silver" title="Silver collected">
+              <span class="collector-slot__star">★</span>
+              <span id="count-silver" class="collector-slot__count">0</span>
+            </div>
+            <div class="collector-slot collector-slot--bronze" title="Bronze collected">
+              <span class="collector-slot__star">★</span>
+              <span id="count-bronze" class="collector-slot__count">0</span>
+            </div>
+          </aside>
+
+          <div id="card-grid" class="card-grid" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <footer class="statusbar">
+        <p id="status-text">Loading cards...</p>
+      </footer>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
