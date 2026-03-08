@@ -1,0 +1,33 @@
+{"name": "🔴 → 🔵", "rarity": "bronze", "symbols": [], "text": "Convert 1\n🔴 -> 🔵", "color": "red, blue"}
+{"name": "🔵 → 🟢", "rarity": "bronze", "symbols": [], "text": "Convert 1\n🔵 -> 🟢", "color": "blue, green"}
+{"name": "🟢 → 🔴", "rarity": "bronze", "symbols": [], "text": "Convert 1\n🟢 -> 🔴", "color": "green, red"}
+{"name": "🎲", "rarity": "bronze", "symbols": ["dice"], "text": "Reroll\n1 die", "color": "rainbow"}
+{"name": "🔴 □", "rarity": "bronze", "symbols": [["color", "red", 2], "dice"], "reward": ["token", "red"], "text": "", "color": "red"}
+{"name": "🟢 □", "rarity": "bronze", "symbols": [["color", "green", 2], "dice"], "reward": ["token", "green"], "text": "", "color": "green"}
+{"name": "🔵 □", "rarity": "bronze", "symbols": [["color", "blue", 2], "dice"], "reward": ["token", "blue"], "text": "", "color": "blue"}
+{"name": "☀ □", "rarity": "bronze", "symbols": ["light", "light", "dice"], "reward": ["token", "light"], "text": "", "color": "light"}
+{"name": "✦ □", "rarity": "bronze", "symbols": ["fusion", "fusion", "dice"], "reward": ["token", "fusion"], "text": "", "color": "fusion"}
+{"name": "☾ □", "rarity": "bronze", "symbols": ["dark", "dark", "dice"], "reward": ["token", "dark"], "text": "", "color": "dark"}
+{"name": "🌈 □", "rarity": "bronze", "symbols": ["rainbow", "rainbow", "dice"], "reward": ["token", "rainbow"], "text": "", "color": "rainbow"}
+{"name": "🔴 → 🔵", "rarity": "silver", "symbols": [], "text": "Convert up to 2\n🔴 -> 🔵", "color": "red, blue"}
+{"name": "🔵 → 🟢", "rarity": "silver", "symbols": [], "text": "Convert up to 2\n🔵 -> 🟢", "color": "blue, green"}
+{"name": "🟢 → 🔴", "rarity": "silver", "symbols": [], "text": "Convert up to 2\n🟢 -> 🔴", "color": "green, red"}
+{"name": "🎲", "rarity": "silver", "symbols": ["dice"], "text": "Reroll\n2 dice", "color": "rainbow"}
+{"name": "🔴 □", "rarity": "silver", "symbols": [["color", "red", 2], "dice"], "reward": ["token", "red"], "text": "", "color": "red"}
+{"name": "🟢 □", "rarity": "silver", "symbols": [["color", "green", 2], "dice"], "reward": ["token", "green"], "text": "", "color": "green"}
+{"name": "🔵 □", "rarity": "silver", "symbols": [["color", "blue", 2], "dice"], "reward": ["token", "blue"], "text": "", "color": "blue"}
+{"name": "☀ □", "rarity": "silver", "symbols": ["light", "light", "dice"], "reward": ["token", "light"], "text": "", "color": "light"}
+{"name": "✦ □", "rarity": "silver", "symbols": ["fusion", "fusion", "dice"], "reward": ["token", "fusion"], "text": "", "color": "fusion"}
+{"name": "☾ □", "rarity": "silver", "symbols": ["dark", "dark", "dice"], "reward": ["token", "dark"], "text": "", "color": "dark"}
+{"name": "🌈 □", "rarity": "silver", "symbols": ["rainbow", "rainbow", "dice"], "reward": ["token", "rainbow"], "text": "", "color": "rainbow"}
+{"name": "🔴 → 🔵", "rarity": "gold", "symbols": [], "text": "Convert up to 3\n🔴 -> 🔵", "color": "red, blue"}
+{"name": "🔵 → 🟢", "rarity": "gold", "symbols": [], "text": "Convert up to 3\n🔵 -> 🟢", "color": "blue, green"}
+{"name": "🟢 → 🔴", "rarity": "gold", "symbols": [], "text": "Convert up to 3\n🟢 -> 🔴", "color": "green, red"}
+{"name": "🎲", "rarity": "gold", "symbols": ["dice"], "text": "Reroll\n3 dice", "color": "rainbow"}
+{"name": "🔴 □", "rarity": "gold", "symbols": [["color", "red", 2], "dice"], "reward": ["token", "red"], "text": "", "color": "red"}
+{"name": "🟢 □", "rarity": "gold", "symbols": [["color", "green", 2], "dice"], "reward": ["token", "green"], "text": "", "color": "green"}
+{"name": "🔵 □", "rarity": "gold", "symbols": [["color", "blue", 2], "dice"], "reward": ["token", "blue"], "text": "", "color": "blue"}
+{"name": "☀ □", "rarity": "gold", "symbols": ["light", "light", "dice"], "reward": ["token", "light"], "text": "", "color": "light"}
+{"name": "✦ □", "rarity": "gold", "symbols": ["fusion", "fusion", "dice"], "reward": ["token", "fusion"], "text": "", "color": "fusion"}
+{"name": "☾ □", "rarity": "gold", "symbols": ["dark", "dark", "dice"], "reward": ["token", "dark"], "text": "", "color": "dark"}
+{"name": "🌈 □", "rarity": "gold", "symbols": ["rainbow", "rainbow", "dice"], "reward": ["token", "rainbow"], "text": "", "color": "rainbow"}

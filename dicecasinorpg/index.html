@@ -10,19 +10,31 @@
     <main class="app-shell">
       <section class="table-frame">
         <div class="table-layout">
-          <aside class="collector-bar" aria-label="Collected stars">
-            <div class="collector-slot collector-slot--gold" title="Gold collected">
-              <span class="collector-slot__star">★</span>
-              <span id="count-gold" class="collector-slot__count">0</span>
-            </div>
-            <div class="collector-slot collector-slot--silver" title="Silver collected">
-              <span class="collector-slot__star">★</span>
-              <span id="count-silver" class="collector-slot__count">0</span>
-            </div>
-            <div class="collector-slot collector-slot--bronze" title="Bronze collected">
-              <span class="collector-slot__star">★</span>
-              <span id="count-bronze" class="collector-slot__count">0</span>
-            </div>
+          <aside class="item-controls" aria-label="Item deck controls">
+            <p class="item-controls__label">Get items</p>
+            <button type="button" class="item-button item-button--bronze" data-item-tier="bronze">
+              Bronze
+            </button>
+            <button type="button" class="item-button item-button--silver" data-item-tier="silver">
+              Silver
+            </button>
+            <button type="button" class="item-button item-button--gold" data-item-tier="gold">
+              Gold
+            </button>
+            <section class="players-panel" aria-label="Players">
+              <p class="players-panel__label">Players</p>
+              <div id="players-list" class="players-list" aria-live="polite"></div>
+            </section>
+            <section class="tokens-panel" aria-label="Player tokens">
+              <p class="tokens-panel__label">Current Player Tokens</p>
+              <div id="tokens-list" class="tokens-list" aria-live="polite"></div>
+            </section>
+            <section class="dice-controls" aria-label="Dice controls">
+              <p class="dice-controls__label">Dice</p>
+              <button id="reroll-selected-dice" type="button" class="dice-action-button">🔄 Reroll Chosen</button>
+              <div id="dice-grid" class="dice-grid" aria-live="polite"></div>
+              <button id="roll-all-dice" type="button" class="dice-action-button">🎲 Roll All Dice</button>
+            </section>
           </aside>
 
           <div id="card-grid" class="card-grid" aria-live="polite"></div>
@@ -31,6 +43,7 @@
 
       <footer class="statusbar">
         <p id="status-text">Loading cards...</p>
+        <button id="legacy-items-toggle" type="button" class="statusbar__button">Enable legacy items</button>
       </footer>
     </main>
 
