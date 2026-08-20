@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Jackbox LLM player</title>
+    <script type="module" crossorigin src="./assets/index-k1Sskt2c.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-D3cr4FsC.css">
+  </head>
+  <body>
+    <main class="controller">
+      <p class="eyebrow">Jackbox LLM</p>
+      <h1 id="heading">Player controller</h1>
+      <p id="player-label" class="player-label" hidden></p>
+
+      <section id="status-panel" class="status-panel" aria-live="polite">
+        <div id="status-spinner" class="spinner" aria-hidden="true"></div>
+        <h2 id="status-title">Connecting…</h2>
+        <p id="status-message">Checking your private player link.</p>
+      </section>
+
+      <form id="answer-form" class="answer-form" hidden novalidate>
+        <label for="answer">Your answer</label>
+        <textarea
+          id="answer"
+          name="answer"
+          rows="6"
+          maxlength="500"
+          autocomplete="off"
+        ></textarea>
+        <div class="answer-meta">
+          <span id="answer-error" class="answer-error" role="alert"></span>
+          <span id="answer-count">0 / 500</span>
+        </div>
+        <button id="submit-answer" type="submit">Submit answer</button>
+      </form>
+
+      <button id="reconnect" type="button" class="secondary" hidden>
+        Check again
+      </button>
+    </main>
+  </body>
+</html>
